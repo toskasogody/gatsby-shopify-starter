@@ -1,6 +1,10 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+});
+
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Shopify Starter`,
+    title: `Gatsby Default Starter`,
     description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
     author: `@gatsbyjs`,
     siteUrl: `https://gatsbystarterdefaultsource.gatsbyjs.io/`,
@@ -30,9 +34,9 @@ module.exports = {
     {
       resolve: `gatsby-source-sanity`,
       options: {
-        projectId: `your-project-id`, // Replace with your Sanity project ID
-        dataset: `production`, // Replace with your Sanity dataset
-        token: process.env.SANITY_TOKEN, // Sanity token if you have one
+        projectId: `9dcq25xb`, // Your Sanity project ID
+        dataset: `production`, // Your Sanity dataset
+        token: process.env.SANITY_TOKEN, // Sanity token
         watchMode: true,
         overlayDrafts: true,
       },
