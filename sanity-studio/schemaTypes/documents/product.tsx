@@ -1,4 +1,3 @@
-// schemas/documents/product.tsx
 import { TagIcon } from '@sanity/icons';
 import pluralize from 'pluralize-esm';
 import ProductHiddenInput from '../../components/inputs/ProductHidden';
@@ -36,7 +35,10 @@ export const productType = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      options: { source: 'title', maxLength: 200 },
+      options: {
+        source: 'title',
+        maxLength: 200,
+      },
     }),
     defineField({
       name: 'description',
