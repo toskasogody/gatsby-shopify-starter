@@ -26,6 +26,7 @@ export default defineConfig({
     imageHotspotArrayPlugin(),
     customDocumentActions(),
     media(),
+    visionTool(),
     ...(isDev ? devOnlyPlugins : []),
   ],
 

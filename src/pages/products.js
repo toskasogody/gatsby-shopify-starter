@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { graphql } from 'gatsby';
 import { GatsbyImage, getImage } from 'gatsby-plugin-image';
-import ShopifyBuy from '@shopify/buy-button-js';
 
 export const query = graphql`
   {
@@ -28,30 +27,11 @@ export const query = graphql`
 const ProductsPage = ({ data }) => {
   const products = data.allSanityProduct.nodes;
 
-  useEffect(() => {
-    const client = ShopifyBuy.buildClient({
-      domain: process.env.GATSBY_SHOPIFY_DOMAIN,
-      storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-    });
-
-    const ui = ShopifyBuy.UI.init(client);
-    products.forEach((product) => {
-      if (product.shopifyId) {
-        ui.createComponent('product', {
-          id: product.shopifyId,
-          node: document.getElementById(`buy-button-${product.shopifyId}`),
-          moneyFormat: '%24%7B%7Bamount%7D%7D',
-        });
-      }
-    });
-  }, [products]);
-
   return (
     <div>
       <h1>Products</h1>
       {products.map((product) => (
         <div key={product._id}>
-          <pre>{JSON.stringify(product, null, 2)}</pre>
           <h2>{product.title || 'No Title'}</h2>
           <p>{product.description || 'No Description'}</p>
           <p>{product.price ? `$${product.price}` : 'No Price'}</p>
@@ -61,7 +41,7 @@ const ProductsPage = ({ data }) => {
               alt={product.title}
             />
           )}
-          <div id={`buy-button-${product.shopifyId}`} />
+          <div id={`buy-button-${product.shopifyId}`}>Buy Button Placeholder</div>
         </div>
       ))}
     </div>
