@@ -4,9 +4,10 @@ import { GatsbyImage, getImage } from 'gatsby-plugin-image';
 import ShopifyBuy from '@shopify/buy-button-js';
 
 export const query = graphql`
-  query {
+  {
     allSanityProduct {
       nodes {
+        _id
         title
         slug {
           current
@@ -29,17 +30,19 @@ const ProductsPage = ({ data }) => {
 
   useEffect(() => {
     const client = ShopifyBuy.buildClient({
-      domain: 'your-shopify-store-domain', // Replace with your Shopify store domain
-      storefrontAccessToken: 'your-shopify-access-token', // Replace with your Shopify access token
+      domain: process.env.GATSBY_SHOPIFY_DOMAIN,
+      storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
     });
 
     const ui = ShopifyBuy.UI.init(client);
     products.forEach((product) => {
-      ui.createComponent('product', {
-        id: product.shopifyId,
-        node: document.getElementById(`buy-button-${product.shopifyId}`),
-        moneyFormat: '%24%7B%7Bamount%7D%7D',
-      });
+      if (product.shopifyId) {
+        ui.createComponent('product', {
+          id: product.shopifyId,
+          node: document.getElementById(`buy-button-${product.shopifyId}`),
+          moneyFormat: '%24%7B%7Bamount%7D%7D',
+        });
+      }
     });
   }, [products]);
 
@@ -47,11 +50,12 @@ const ProductsPage = ({ data }) => {
     <div>
       <h1>Products</h1>
       {products.map((product) => (
-        <div key={product.slug.current}>
-          <h2>{product.title}</h2>
-          <p>{product.description}</p>
-          <p>{`$${product.price}`}</p>
-          {product.images.length > 0 && (
+        <div key={product._id}>
+          <pre>{JSON.stringify(product, null, 2)}</pre>
+          <h2>{product.title || 'No Title'}</h2>
+          <p>{product.description || 'No Description'}</p>
+          <p>{product.price ? `$${product.price}` : 'No Price'}</p>
+          {product.images && product.images.length > 0 && (
             <GatsbyImage
               image={getImage(product.images[0].asset.gatsbyImageData)}
               alt={product.title}
