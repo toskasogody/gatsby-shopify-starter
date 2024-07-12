@@ -32,7 +32,7 @@ module.exports = {
     {
       resolve: `gatsby-source-sanity`,
       options: {
-        projectId:process.env.SANITY_PROJECT_ID, // Your Sanity project ID
+        projectId: process.env.SANITY_PROJECT_ID, // Your Sanity project ID
         dataset: process.env.SANITY_DATASET, // Your Sanity dataset
         token: process.env.SANITY_READ_TOKEN, // Sanity token
         watchMode: true,
