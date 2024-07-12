@@ -18,7 +18,6 @@
     box-sizing: border-box;
     height: 100%;
     border: none;
-    
   }
   
   .product-image img {
@@ -48,10 +47,11 @@
   
   .buy-button-placeholder {
     margin-top: auto;
-    background-color: red;
   }
+  
   @media (max-width: 992px) {
-    .product-title{
-        height: 4em;
+    .product-title {
+      height: 4em;
     }
   }
+  

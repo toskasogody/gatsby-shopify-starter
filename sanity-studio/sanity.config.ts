@@ -15,9 +15,9 @@ const devOnlyPlugins = [visionTool()]
 
 export default defineConfig({
   name: 'default',
-  title: 'Headless exercise',
+  title: 'Pet Products',
 
-  projectId: '9dcq25xb',
+  projectId: 'wep3qw10',
   dataset: 'production',
 
   plugins: [
