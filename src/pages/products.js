@@ -7,15 +7,20 @@ export const query = graphql`
     allSanityProduct {
       nodes {
         _id
-        store{
-        title
-        descriptionHtml
-        
-        
+        store {
+          title
+          descriptionHtml
+          previewImageUrl
+          priceRange {
+            minVariantPrice
+          }
+          slug {
+            current
+          }
+        }
       }
     }
   }
-     }
 `;
 
 const ProductsPage = ({ data }) => {
@@ -37,17 +42,14 @@ const ProductsPage = ({ data }) => {
       {products.map((product) => (
         <div key={product._id}>
           <h2>{product.store.title || 'No Title'}</h2>
-          <p>{product.store.descriptionHtml || 'No Description'}</p>
-          <p>{product.store.price ? `$${product.price}` : 'No Price'}</p>
-          {product.store.images && product.images.length > 0 ? (
-            <GatsbyImage
-              image={getImage(product.images[0].asset.gatsbyImageData)}
-              alt={product.title}
-            />
+          <p dangerouslySetInnerHTML={{ __html: product.store.descriptionHtml || 'No Description' }}></p>
+          <p>{product.store.priceRange.minVariantPrice ? `$${product.store.priceRange.minVariantPrice}` : 'No Price'}</p>
+          {product.store.previewImageUrl ? (
+            <img src={product.store.previewImageUrl} alt={product.store.title} />
           ) : (
             <p>No Images</p>
           )}
-          <div id={`buy-button-${product.shopifyId}`}>Buy Button Placeholder</div>
+          <div id={`buy-button-${product.store.id}`}>Buy Button Placeholder</div>
         </div>
       ))}
     </div>
