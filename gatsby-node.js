@@ -38,4 +38,12 @@ exports.createPages = async ({ graphql, actions }) => {
       },
     });
   });
+  exports.createPages = async ({ actions }) => {
+    const { createPage } = actions;
+    createPage({
+      path: '/cart',
+      component: require.resolve('./src/pages/cart.js'),
+    });
+  };
+  
 };

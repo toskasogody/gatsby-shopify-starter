@@ -1,0 +1,18 @@
+.container.cart-page {
+    margin-top: 50px;
+  }
+  
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
+  
+  .cart-summary {
+    text-align: right;
+    margin-top: 20px;
+  }
+  
+  .cart-summary .btn {
+    margin-top: 10px;
+  }
+  

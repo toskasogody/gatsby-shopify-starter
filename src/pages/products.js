@@ -4,6 +4,7 @@ import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './products.css'; // Ensure you have a CSS file for additional styling
 
+
 export const query = graphql`
   {
     allSanityProduct {
@@ -110,7 +111,7 @@ const ProductsPage = ({ data }) => {
               <div className="product-image">
                 <img src={product.store.previewImageUrl} className="img-fluid" alt={product.store.title} />
               </div>
-              <div className="product-details mt-2">
+              <div className="product-details">
                 <h2 className="product-title">{product.store.title || 'No Title'}</h2>
                 <p id={`price-${product.store.id}`} className="product-price">
                   {product.store.variants[0].store.price ? `$${product.store.variants[0].store.price}` : 'No Price'}
