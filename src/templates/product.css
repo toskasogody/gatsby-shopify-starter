@@ -1,0 +1,28 @@
+.product-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.variant-images {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.variant-image {
+  width: 100px;
+  height: auto;
+  cursor: pointer;
+}
+
+.variant-image:hover {
+  border: 2px solid #000080;
+}
+
+.quantity-selector {
+  margin: 20px 0;
+}
+
+.buy-button-placeholder {
+  margin-top: 20px;
+}

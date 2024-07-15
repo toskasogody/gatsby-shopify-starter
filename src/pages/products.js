@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { graphql } from 'gatsby';
+import { graphql, Link } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './products.css'; // Ensure you have a CSS file for additional styling
@@ -12,6 +12,9 @@ export const query = graphql`
         store {
           title
           id
+          slug {
+            current
+          }
           priceRange {
             minVariantPrice
           }
@@ -32,7 +35,7 @@ const ProductsPage = ({ data }) => {
   }, [data]);
 
   useEffect(() => {
-    if (process.env.GATSBY_SHOPIFY_DOMAIN && process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
+    if (process.env.GATSBY_SHOPIFY_STORE_DOMAIN && process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
       const client = ShopifyBuy.buildClient({
         domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
         storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
@@ -58,7 +61,22 @@ const ProductsPage = ({ data }) => {
                   price: false,
                 },
                 text: {
-                  button: 'Add to Cart',
+                  button: 'ADD TO CART',
+                },
+                styles: {
+                  button: {
+                    'background-color': '#000080', // Change to your desired background color
+                    'font-family': 'Arial, sans-serif',
+                    'font-size': '12px',
+                    'padding-top': '10px',
+                    'padding-bottom': '10px',
+                    ':hover': {
+                      'background-color': '#4D4DDF', // Change to your desired hover background color
+                    },
+                    ':focus': {
+                      'background-color': '#8E8EF4', // Change to your desired focus background color
+                    },
+                  },
                 },
               },
             },
@@ -80,16 +98,16 @@ const ProductsPage = ({ data }) => {
       <div className="row">
         {products.map((product) => (
           <div key={product._id} className="col-md-3 mb-4">
-            <div className="card product-card">
+            <Link to={`/product/${product.store.slug.current}`} className="product-title-link">
               <div className="product-image">
                 <img src={product.store.previewImageUrl} className="img-fluid" alt={product.store.title} />
               </div>
               <div className="product-details mt-2">
                 <h2 className="product-title">{product.store.title || 'No Title'}</h2>
                 <p className="product-price">{product.store.priceRange.minVariantPrice ? `$${product.store.priceRange.minVariantPrice}` : 'No Price'}</p>
-                <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
               </div>
-            </div>
+            </Link>
+            <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
           </div>
         ))}
       </div>

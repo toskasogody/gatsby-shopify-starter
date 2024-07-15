@@ -54,4 +54,11 @@
       height: 4em;
     }
   }
+  .product-title-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit color */
+  }
   
+  .product-title-link:hover .product-title {
+    color: #4D4DDF; /* Change to your desired hover color */
+  }
