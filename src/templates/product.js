@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { graphql } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './product.css'; // Ensure you have a CSS file for styling
+import './product.css'; // Ensure you have a CSS file for additional styling
 
 export const query = graphql`
   query($id: String!) {
     sanityProduct(id: { eq: $id }) {
+      _id
       store {
         title
         id
@@ -18,27 +19,31 @@ export const query = graphql`
           name
           values
         }
-      
+        variants {
+          id
+          
+        }
       }
     }
   }
 `;
 
-const ProductTemplate = ({ data }) => {
-  const product = data.sanityProduct.store;
+const ProductPage = ({ data }) => {
+  const { sanityProduct: product } = data;
+  const [selectedVariant, setSelectedVariant] = useState(product.store.variants[0]);
 
   useEffect(() => {
-    if (process.env.GATSBY_SHOPIFY_STORE_DOMAIN && process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-      const client = ShopifyBuy.buildClient({
-        domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
-        storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-      });
+    const client = ShopifyBuy.buildClient({
+      domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
+      storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+    });
 
-      const ui = ShopifyBuy.UI.init(client);
+    const ui = ShopifyBuy.UI.init(client);
 
+    if (product.store.id) {
       ui.createComponent('product', {
-        id: product.id,
-        node: document.getElementById(`buy-button-${product.id}`),
+        id: product.store.id,
+        node: document.getElementById(`buy-button-${product.store.id}`),
         moneyFormat: '%24%7B%7Bamount%7D%7D',
         options: {
           product: {
@@ -55,39 +60,76 @@ const ProductTemplate = ({ data }) => {
             },
             styles: {
               button: {
-                'background-color': '#000080', // Change to your desired background color
+                'background-color': '#000080',
                 'font-family': 'Arial, sans-serif',
                 'font-size': '12px',
                 'padding-top': '10px',
                 'padding-bottom': '10px',
                 ':hover': {
-                  'background-color': '#4D4DDF', // Change to your desired hover background color
+                  'background-color': '#4D4DDF',
                 },
                 ':focus': {
-                  'background-color': '#8E8EF4', // Change to your desired focus background color
+                  'background-color': '#8E8EF4',
                 },
+              },
+            },
+            events: {
+              variantSelected: (component) => {
+                const selectedVariant = component.selectedVariant;
+                const priceElement = document.getElementById(`price-${product.store.id}`);
+                if (priceElement) {
+                  priceElement.textContent = `$${selectedVariant.price}`;
+                }
               },
             },
           },
         },
       });
-    } else {
-      console.error('Shopify domain or storefront access token is not set.');
     }
-  }, [product]);
+  }, [product.store.id]);
+
+  const handleVariantClick = (variant) => {
+    setSelectedVariant(variant);
+    const priceElement = document.getElementById(`price-${product.store.id}`);
+    if (priceElement) {
+      priceElement.textContent = `$${variant.price}`;
+    }
+  };
 
   return (
-    <div className="container product-container">
-      <h1>{product.title}</h1>
-      <div className="product-image">
-        <img src={product.previewImageUrl} className="img-fluid" alt={product.title} />
-      </div>
-      <div className="product-details mt-2">
-        <p className="product-price">{product.priceRange.minVariantPrice ? `$${product.priceRange.minVariantPrice}` : 'No Price'}</p>
-        <div id={`buy-button-${product.id}`} className="buy-button-placeholder"></div>
+    <div className="container product-page">
+      <div className="row">
+        <div className="col-md-6">
+          <img src={selectedVariant.previewImageUrl || product.store.previewImageUrl} className="img-fluid" alt={product.store.title} />
+        </div>
+        <div className="col-md-6">
+          <h1>{product.store.title}</h1>
+          <p id={`price-${product.store.id}`} className="product-price">
+            ${selectedVariant.price}
+          </p>
+          <div className="variant-options">
+            {product.store.options.map((option, index) => (
+              <div key={index} className="variant-option-group">
+                <p>{option.name}</p>
+                <div className="variant-values">
+                  {option.values.map((value, valueIndex) => (
+                    <button
+                      key={valueIndex}
+                      className="variant-value"
+                      onClick={() => handleVariantClick(product.store.variants[valueIndex])}
+                    >
+                      {value}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default ProductTemplate;
+export default ProductPage;

@@ -15,10 +15,15 @@ export const query = graphql`
           slug {
             current
           }
-          priceRange {
-            minVariantPrice
-          }
           previewImageUrl
+          variants {
+            id
+            store {
+              price
+              title
+              previewImageUrl
+            }
+          }
         }
       }
     }
@@ -45,7 +50,8 @@ const ProductsPage = ({ data }) => {
 
       products.forEach((product) => {
         if (product.store.id) {
-          console.log(`Creating buy button for product ID: ${product.store.id}`);
+          const firstVariantId = product.store.variants[0].id;
+          console.log(`Creating buy button for product ID: ${product.store.id} with variant ID: ${firstVariantId}`);
           ui.createComponent('product', {
             id: product.store.id,
             node: document.getElementById(`buy-button-${product.store.id}`),
@@ -55,10 +61,12 @@ const ProductsPage = ({ data }) => {
                 buttonDestination: 'cart',
                 layout: 'vertical',
                 width: '240px',
+                variantId: firstVariantId, // Ensure the first variant is used
                 contents: {
                   img: false,
                   title: false,
                   price: false,
+                  options: false, // Hide options (variant selection)
                 },
                 text: {
                   button: 'ADD TO CART',
@@ -104,7 +112,9 @@ const ProductsPage = ({ data }) => {
               </div>
               <div className="product-details mt-2">
                 <h2 className="product-title">{product.store.title || 'No Title'}</h2>
-                <p className="product-price">{product.store.priceRange.minVariantPrice ? `$${product.store.priceRange.minVariantPrice}` : 'No Price'}</p>
+                <p id={`price-${product.store.id}`} className="product-price">
+                  {product.store.variants[0].store.price ? `$${product.store.variants[0].store.price}` : 'No Price'}
+                </p>
               </div>
             </Link>
             <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
