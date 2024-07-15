@@ -11,6 +11,9 @@ export const query = graphql`
       store {
         title
         id
+        priceRange {
+          minVariantPrice
+        }
         previewImageUrl
         variants {
           id
@@ -51,7 +54,6 @@ const ProductPage = ({ data }) => {
               img: false,
               title: false,
               price: false,
-              options: false,
             },
             text: {
               button: 'ADD TO CART',
@@ -71,67 +73,26 @@ const ProductPage = ({ data }) => {
                 },
               },
             },
+            events: {
+              variantSelected: (component) => {
+                const selectedVariant = component.selectedVariant;
+                const priceElement = document.getElementById(`price-${product.store.id}`);
+                if (priceElement) {
+                  priceElement.textContent = `$${selectedVariant.price}`;
+                }
+              },
+            },
           },
         },
       });
     }
   }, [product.store.id]);
 
-  const handleAddToCart = () => {
-    const client = ShopifyBuy.buildClient({
-      domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
-      storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-    });
-
-    const ui = ShopifyBuy.UI.init(client);
-
-    ui.createComponent('product', {
-      id: product.store.id,
-      node: document.getElementById(`buy-button-${product.store.id}`),
-      moneyFormat: '%24%7B%7Bamount%7D%7D',
-      options: {
-        product: {
-          buttonDestination: 'cart',
-          layout: 'vertical',
-          width: '240px',
-          variantId: selectedVariant.id,
-          contents: {
-            img: false,
-            title: false,
-            price: false,
-          },
-          text: {
-            button: 'ADD TO CART',
-          },
-          styles: {
-            button: {
-              'background-color': '#000080',
-              'font-family': 'Arial, sans-serif',
-              'font-size': '12px',
-              'padding-top': '10px',
-              'padding-bottom': '10px',
-              ':hover': {
-                'background-color': '#4D4DDF',
-              },
-              ':focus': {
-                'background-color': '#8E8EF4',
-              },
-            },
-          },
-        },
-      },
-    });
-  };
-
   const handleVariantClick = (variant) => {
     setSelectedVariant(variant);
     const priceElement = document.getElementById(`price-${product.store.id}`);
     if (priceElement) {
       priceElement.textContent = `$${variant.store.price}`;
-    }
-    const mainImageElement = document.getElementById(`main-image-${product.store.id}`);
-    if (mainImageElement) {
-      mainImageElement.src = variant.store.previewImageUrl || product.store.previewImageUrl;
     }
   };
 
@@ -140,7 +101,6 @@ const ProductPage = ({ data }) => {
       <div className="row">
         <div className="col-md-6">
           <img
-            id={`main-image-${product.store.id}`}
             src={selectedVariant.store.previewImageUrl || product.store.previewImageUrl}
             className="img-fluid"
             alt={product.store.title}
@@ -165,7 +125,7 @@ const ProductPage = ({ data }) => {
               </button>
             ))}
           </div>
-          <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder" onClick={handleAddToCart}></div>
+          <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
         </div>
       </div>
     </div>
