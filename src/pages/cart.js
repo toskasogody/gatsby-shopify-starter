@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './cart.css'; 
+import './cart.css';
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
@@ -79,9 +79,33 @@ const CartPage = () => {
       setCart(checkout);
       buyButtonRef.current.model.attrs.lineItems = checkout.lineItems;
       buyButtonRef.current.view.render();
-      
+
       // Trigger the removeItem event to synchronize the slider cart
       const event = new CustomEvent('removeItem', {
+        detail: {
+          cart: checkout,
+        },
+      });
+      buyButtonRef.current.view.node.dispatchEvent(event);
+    });
+  };
+
+  const handleQuantityChange = (lineItemId, quantity) => {
+    const client = ShopifyBuy.buildClient({
+      domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
+      storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+    });
+
+    const cartId = buyButtonRef.current.model.id;
+    client.checkout.updateLineItems(cartId, [
+      { id: lineItemId, quantity: parseInt(quantity, 10) },
+    ]).then((checkout) => {
+      setCart(checkout);
+      buyButtonRef.current.model.attrs.lineItems = checkout.lineItems;
+      buyButtonRef.current.view.render();
+
+      // Trigger the updateQuantity event to synchronize the slider cart
+      const event = new CustomEvent('updateQuantity', {
         detail: {
           cart: checkout,
         },
@@ -100,7 +124,7 @@ const CartPage = () => {
 
   return (
     <div className="container cart-container">
-      <h1>Your Shopping Cart</h1>
+      <h1 className="cart-page-title">Your Shopping Cart</h1>
       {cart.lineItems.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
@@ -108,12 +132,19 @@ const CartPage = () => {
           <ul className="cart-items">
             {cart.lineItems.map((item) => (
               <li key={item.id} className="cart-item">
-                <img src={item.variant.image.src} alt={item.title} />
+                <img src={item.variant.image.src} alt={item.title} className="cart-item-image" />
                 <div className="cart-item-details">
-                  <h2>{item.title}</h2>
-                  <p>Quantity: {item.quantity}</p>
-                  <p>Price: ${item.variant.price.amount}</p> {/* Ensure this is a string or number */}
-                  <button onClick={() => handleRemove(item.id)}>Remove</button>
+                 
+                  <h2 className="cart-item-title">{item.title}</h2>
+                  <div className="cart-item-controls">
+                    <div className="cart-item-quantity">
+                      <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>+</button>
+                    </div>
+                    <button onClick={() => handleRemove(item.id)} className="cart-item-remove">Remove</button>
+                  </div>
+                  <p className="cart-item-price">${item.variant.price.amount}</p>
                 </div>
               </li>
             ))}
