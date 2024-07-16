@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './cart.css'; // Ensure you have a CSS file for additional styling
+import './cart.css'; // Ensure this path is correct based on your directory structure
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const buyButtonRef = useRef(null);
 
   useEffect(() => {
     const client = ShopifyBuy.buildClient({
@@ -13,88 +13,101 @@ const CartPage = () => {
       storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
     });
 
-    const cartId = localStorage.getItem('shopifyCartId');
+    const ui = ShopifyBuy.UI.init(client);
 
-    if (cartId) {
-      client.checkout.fetch(cartId).then((checkout) => {
-        setCart(checkout);
-        setLoading(false);
-      });
-    } else {
-      client.checkout.create().then((newCheckout) => {
-        localStorage.setItem('shopifyCartId', newCheckout.id);
-        setCart(newCheckout);
-        setLoading(false);
-      });
-    }
+    // Create the cart component and store a reference to it
+    ui.createComponent('cart', {
+      node: document.getElementById('buy-button-cart'),
+      options: {
+        cart: {
+          startOpen: true,
+          events: {
+            updateQuantity: () => fetchCart(client),
+            removeItem: () => fetchCart(client),
+          },
+        },
+      },
+    }).then((component) => {
+      buyButtonRef.current = component;
+      fetchCart(client);
+
+      // Poll for cart updates every 5 seconds
+      const intervalId = setInterval(() => {
+        fetchCart(client);
+      }, 5000);
+
+      // Clear the interval when the component unmounts
+      return () => clearInterval(intervalId);
+    });
+
+    // Create a hidden product component to initialize the slider cart
+    ui.createComponent('product', {
+      id: 'some-product-id', // Replace with an actual product ID
+      node: document.createElement('div'), // Create a hidden node
+      options: {
+        product: {
+          events: {
+            addVariantToCart: () => fetchCart(client),
+          },
+        },
+      },
+    });
   }, []);
 
-  const updateQuantity = (lineItemId, quantity) => {
-    const client = ShopifyBuy.buildClient({
-      domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
-      storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-    });
-
-    const cartId = localStorage.getItem('shopifyCartId');
-    client.checkout.updateLineItems(cartId, [{ id: lineItemId, quantity }]).then((checkout) => {
+  const fetchCart = (client) => {
+    const cartId = buyButtonRef.current.model.id;
+    client.checkout.fetch(cartId).then((checkout) => {
       setCart(checkout);
     });
   };
 
-  const removeItem = (lineItemId) => {
+  const handleRemove = (lineItemId) => {
     const client = ShopifyBuy.buildClient({
       domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
       storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
     });
 
-    const cartId = localStorage.getItem('shopifyCartId');
+    const cartId = buyButtonRef.current.model.id;
     client.checkout.removeLineItems(cartId, [lineItemId]).then((checkout) => {
       setCart(checkout);
+      buyButtonRef.current.model.lineItems = checkout.lineItems;
+      buyButtonRef.current.view.render();
     });
   };
 
-  if (loading) {
-    return <p>Loading cart...</p>;
+  const handleCheckout = () => {
+    window.open(cart.webUrl);
+  };
+
+  if (!cart) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <div className="container cart-page">
-      <h1>Your Cart</h1>
+    <div className="container cart-container">
+      <h1>Your Shopping Cart</h1>
       {cart.lineItems.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
         <div>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Remove</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.lineItems.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.title}</td>
-                  <td>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
-                      min="1"
-                    />
-                  </td>
-                  <td>${(item.variant.price * item.quantity).toFixed(2)}</td>
-                  <td>
-                    <button onClick={() => removeItem(item.id)}>Remove</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ul className="cart-items">
+            {cart.lineItems.map((item) => (
+              <li key={item.id} className="cart-item">
+                <img src={item.variant.image.src} alt={item.title} />
+                <div className="cart-item-details">
+                  <h2>{item.title}</h2>
+                  <p>Quantity: {item.quantity}</p>
+                  <p>Price: ${item.variant.price.amount}</p> {/* Ensure this is a string or number */}
+                  <button onClick={() => handleRemove(item.id)}>Remove</button>
+                </div>
+              </li>
+            ))}
+          </ul>
           <div className="cart-total">
-            <h3>Total: ${cart.totalPrice}</h3>
+            <h3>Total: ${cart.subtotalPrice.amount}</h3> {/* Ensure this is a string or number */}
+            <button onClick={handleCheckout} className="checkout-button">
+              Checkout
+            </button>
           </div>
         </div>
       )}

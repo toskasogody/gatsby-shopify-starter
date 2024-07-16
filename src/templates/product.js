@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { graphql } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './product.css'; // Ensure you have a CSS file for additional styling
+import './product.css';
 
 export const query = graphql`
   query($id: String!) {
@@ -11,9 +11,6 @@ export const query = graphql`
       store {
         title
         id
-        priceRange {
-          minVariantPrice
-        }
         previewImageUrl
         variants {
           id
@@ -31,6 +28,7 @@ export const query = graphql`
 const ProductPage = ({ data }) => {
   const { sanityProduct: product } = data;
   const [selectedVariant, setSelectedVariant] = useState(product.store.variants[0]);
+  const buyButtonRef = useRef(null);
 
   useEffect(() => {
     const client = ShopifyBuy.buildClient({
@@ -65,6 +63,7 @@ const ProductPage = ({ data }) => {
                 'font-size': '12px',
                 'padding-top': '10px',
                 'padding-bottom': '10px',
+                'width': '100%', // Make the button full width
                 ':hover': {
                   'background-color': '#4D4DDF',
                 },
@@ -84,6 +83,9 @@ const ProductPage = ({ data }) => {
             },
           },
         },
+      }).then((component) => {
+        buyButtonRef.current = component;
+        console.log('Buy Button Component:', buyButtonRef.current);
       });
     }
   }, [product.store.id]);
@@ -94,37 +96,49 @@ const ProductPage = ({ data }) => {
     if (priceElement) {
       priceElement.textContent = `$${variant.store.price}`;
     }
+
+    // Update the Shopify Buy Button variant selection
+    if (buyButtonRef.current) {
+      const selectElement = buyButtonRef.current.node.querySelector('.shopify-buy__option-select__select');
+      if (selectElement) {
+        const option = Array.from(selectElement.options).find(opt => opt.value === variant.store.title);
+        console.log('Option:', option);
+        if (option) {
+          selectElement.value = option.value;
+          const event = new Event('change', { bubbles: true });
+          selectElement.dispatchEvent(event);
+        }
+      }
+    }
   };
 
   return (
-    <div className="container product-page">
-      <div className="row">
-        <div className="col-md-6">
-          <img
-            src={selectedVariant.store.previewImageUrl || product.store.previewImageUrl}
-            className="img-fluid"
-            alt={product.store.title}
-          />
-        </div>
-        <div className="col-md-6">
-          <h1>{product.store.title}</h1>
-          <p id={`price-${product.store.id}`} className="product-price">
+    <div className="product-container">
+      <div className="variant-options">
+        {product.store.variants.map((variant, index) => (
+          <button
+            key={index}
+            className="variant-image-button"
+            onClick={() => handleVariantClick(variant)}
+            style={{
+              backgroundImage: `url(${variant.store.previewImageUrl})`,
+            }}
+          >
+            <span className="sr-only">{variant.store.title}</span>
+          </button>
+        ))}
+      </div>
+      <div className="product-details pdp-details">
+        <img
+          src={selectedVariant.store.previewImageUrl || product.store.previewImageUrl}
+          className="product-preview"
+          alt={product.store.title}
+        />
+        <div className="product-info pdp-info">
+          <h1 className="product-title pdp-title">{product.store.title}</h1>
+          <p id={`price-${product.store.id}`} className="product-price pdp-price">
             ${selectedVariant.store.price}
           </p>
-          <div className="variant-options">
-            {product.store.variants.map((variant, index) => (
-              <button
-                key={index}
-                className="variant-image-button"
-                onClick={() => handleVariantClick(variant)}
-                style={{
-                  backgroundImage: `url(${variant.store.previewImageUrl})`,
-                }}
-              >
-                <span className="sr-only">{variant.store.title}</span>
-              </button>
-            ))}
-          </div>
           <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
         </div>
       </div>

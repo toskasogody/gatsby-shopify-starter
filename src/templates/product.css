@@ -1,43 +1,70 @@
 .product-container {
-  padding: 20px;
   font-family: Arial, sans-serif;
+  display: flex;
+  width: fit-content;
+  margin: auto;
+  margin-top: 50px;
+  
 }
 
-.variant-images {
+.variant-options {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-right: 20px;
 }
 
-.variant-image {
-  width: 100px;
-  height: auto;
-  cursor: pointer;
-}
-
-.variant-image:hover {
-  border: 2px solid #000080;
-}
-
-.quantity-selector {
-  margin: 20px 0;
-}
-
-.buy-button-placeholder {
-  margin-top: 20px;
-}
 .variant-image-button {
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   background-size: cover;
   background-position: center;
   border: none;
-  margin: 5px;
+  margin: 5px 0;
   cursor: pointer;
 }
 
 .variant-image-button:focus,
 .variant-image-button:hover {
   outline: none;
-  border: 2px solid #000080; /* Add a border or some effect to show it's selected */
+  border: 2px solid #000080;
+}
+
+.pdp-details {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  text-align: left;
+  gap: 20px;
+
+}
+
+.product-preview {
+  max-height: 80vh; /* Set the max-height to be slightly smaller than the viewport height */
+  width: auto;
+}
+
+.pdp-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  align-items: left;
+  justify-content: left;
+}
+
+.pdp-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.pdp-price {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.buy-button-placeholder {
+  margin-top: 20px;
+  max-width: fit-content !important;
+ 
 }
