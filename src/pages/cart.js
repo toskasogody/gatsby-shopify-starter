@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './cart.css'; // Ensure this path is correct based on your directory structure
+import './cart.css'; 
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
