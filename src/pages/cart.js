@@ -150,7 +150,7 @@ const CartPage = () => {
             ))}
           </ul>
           <div className="cart-total">
-            <h3>Total: ${cart.subtotalPrice.amount}</h3> {/* Ensure this is a string or number */}
+            <h3 className="total">Total: ${cart.subtotalPrice.amount}</h3>
             <button onClick={handleCheckout} className="checkout-button">
               Checkout
             </button>

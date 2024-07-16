@@ -85,7 +85,6 @@
 }
 
 .cart-item-price {
- 
   position: absolute;
   right: 0;
   top: 0;
@@ -94,11 +93,15 @@
 
 .cart-total {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  align-items: right;
   margin-top: 20px;
 }
-
+.total{
+  font-size: 18px;
+  text-align: right;
+}
 .checkout-button {
   background-color: #000080;
   color: white;
