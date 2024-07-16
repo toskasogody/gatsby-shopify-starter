@@ -20,7 +20,12 @@ const CartPage = () => {
       node: document.getElementById('buy-button-cart'),
       options: {
         cart: {
-          startOpen: true,
+          startOpen: false,
+          styles: {
+            cart: {
+              visibility: 'hidden',
+            },
+          },
           events: {
             updateQuantity: () => fetchCart(client),
             removeItem: () => fetchCart(client),
@@ -58,6 +63,8 @@ const CartPage = () => {
     const cartId = buyButtonRef.current.model.id;
     client.checkout.fetch(cartId).then((checkout) => {
       setCart(checkout);
+      buyButtonRef.current.model.attrs.lineItems = checkout.lineItems;
+      buyButtonRef.current.view.render();
     });
   };
 
@@ -70,8 +77,16 @@ const CartPage = () => {
     const cartId = buyButtonRef.current.model.id;
     client.checkout.removeLineItems(cartId, [lineItemId]).then((checkout) => {
       setCart(checkout);
-      buyButtonRef.current.model.lineItems = checkout.lineItems;
+      buyButtonRef.current.model.attrs.lineItems = checkout.lineItems;
       buyButtonRef.current.view.render();
+      
+      // Trigger the removeItem event to synchronize the slider cart
+      const event = new CustomEvent('removeItem', {
+        detail: {
+          cart: checkout,
+        },
+      });
+      buyButtonRef.current.view.node.dispatchEvent(event);
     });
   };
 
