@@ -36,32 +36,13 @@
   align-items: flex-start;
   text-align: left;
   gap: 20px;
+  background-color: red;
 
 }
 
-.product-preview {
-  max-height: 80vh; /* Set the max-height to be slightly smaller than the viewport height */
-  width: auto;
-}
 
-.pdp-info {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  align-items: left;
-  justify-content: left;
-}
 
-.pdp-title {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
 
-.pdp-price {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
 
 .buy-button-placeholder {
   margin-top: 20px;

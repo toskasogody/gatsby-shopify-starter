@@ -46,12 +46,13 @@ const ProductPage = ({ data }) => {
         options: {
           product: {
             buttonDestination: 'cart',
-            layout: 'vertical',
+            layout: 'horizontal',
             width: '240px',
             contents: {
-              img: false,
-              title: false,
-              price: false,
+              img: true,
+              title: true,
+              price: true,
+              quantityInput: true
             },
             text: {
               button: 'ADD TO CART',
@@ -102,7 +103,6 @@ const ProductPage = ({ data }) => {
       const selectElement = buyButtonRef.current.node.querySelector('.shopify-buy__option-select__select');
       if (selectElement) {
         const option = Array.from(selectElement.options).find(opt => opt.value === variant.store.title);
-        console.log('Option:', option);
         if (option) {
           selectElement.value = option.value;
           const event = new Event('change', { bubbles: true });
@@ -129,18 +129,7 @@ const ProductPage = ({ data }) => {
         ))}
       </div>
       <div className="product-details pdp-details">
-        <img
-          src={selectedVariant.store.previewImageUrl || product.store.previewImageUrl}
-          className="product-preview"
-          alt={product.store.title}
-        />
-        <div className="product-info pdp-info">
-          <h1 className="product-title pdp-title">{product.store.title}</h1>
-          <p id={`price-${product.store.id}`} className="product-price pdp-price">
-            ${selectedVariant.store.price}
-          </p>
-          <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
-        </div>
+        <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
       </div>
     </div>
   );
