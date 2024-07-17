@@ -16,7 +16,6 @@
 
 .buy-button-placeholder {
   display: flex !important;
-  gap: 20px;
 }
 
 .shopify-buy__product__variant-selectors {

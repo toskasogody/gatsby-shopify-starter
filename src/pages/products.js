@@ -4,7 +4,6 @@ import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './products.css'; 
 
-
 export const query = graphql`
   {
     allSanityProduct {
@@ -61,24 +60,38 @@ const ProductsPage = ({ data }) => {
               product: {
                 buttonDestination: 'cart',
                 layout: 'vertical',
-                width: '240px',
+                width: '100%', // Ensure the button spans the full width of the container
                 variantId: firstVariantId, // Ensure the first variant is used
                 contents: {
-                  img: false,
-                  title: false,
-                  price: false,
-                  options: false, // Hide options (variant selection)
+                  img: true,
+                  title: true,
+                  price: true,
+                  options: false,
                 },
                 text: {
                   button: 'ADD TO CART',
                 },
                 styles: {
+                  product: {
+                    'text-align': 'center',
+                    'font-family': 'Arial, sans-serif',
+                  },
+                  title: {
+                    'font-size': '14px',
+                    'color': '#333',
+                    'font-weight': '300'
+                  },
+                  price: {
+                    'font-size': '14px',
+                    'color': '#666',
+                  },
                   button: {
                     'background-color': '#000080', // Change to your desired background color
                     'font-family': 'Arial, sans-serif',
-                    'font-size': '12px',
+                    'font-size': '10px',
                     'padding-top': '10px',
                     'padding-bottom': '10px',
+                    'width': '70%',
                     ':hover': {
                       'background-color': '#4D4DDF', // Change to your desired hover background color
                     },
@@ -102,23 +115,15 @@ const ProductsPage = ({ data }) => {
   }
 
   return (
-    <div className="container products-container">
-      <h1>Product List</h1>
+    <div className="container">
+      <h1 className="h5 my-5 font-weight-light">Product List</h1>
       <div className="row">
         {products.map((product) => (
           <div key={product._id} className="col-md-3 mb-4">
-            <Link to={`/product/${product.store.slug.current}`} className="product-title-link">
-              <div className="product-image">
-                <img src={product.store.previewImageUrl} className="img-fluid" alt={product.store.title} />
-              </div>
-              <div className="product-details">
-                <h2 className="product-title">{product.store.title || 'No Title'}</h2>
-                <p id={`price-${product.store.id}`} className="product-price">
-                  {product.store.variants[0].store.price ? `$${product.store.variants[0].store.price}` : 'No Price'}
-                </p>
-              </div>
-            </Link>
             <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
+            <Link to={`/product/${product.store.slug.current}`} className="text-decoration-none">
+              <p className="text-center mt-2">View details</p>
+            </Link>
           </div>
         ))}
       </div>

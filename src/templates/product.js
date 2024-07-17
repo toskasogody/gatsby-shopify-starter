@@ -1,4 +1,4 @@
-import React, { useState,useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { graphql } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
