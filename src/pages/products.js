@@ -1,8 +1,10 @@
+// src/pages/products.js
 import React, { useState, useEffect } from 'react';
 import { graphql, Link } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
+import Navbar from '../components/navbar'; // Import the Navbar component
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './products.css'; 
+import './products.css';
 
 export const query = graphql`
   {
@@ -115,19 +117,23 @@ const ProductsPage = ({ data }) => {
   }
 
   return (
-    <div className="container">
-      <h1 className="h5 my-5 font-weight-light">Product List</h1>
-      <div className="row">
-        {products.map((product) => (
-          <div key={product._id} className="col-md-3 mb-4">
-            <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
-            <Link to={`/product/${product.store.slug.current}`} className="text-decoration-none">
-              <p className="text-center mt-2">View details</p>
-            </Link>
-          </div>
-        ))}
+    <>
+      <Navbar /> {/* Add Navbar */}
+      <div className="container">
+        <h1 className="h5 my-5 font-weight-light">Product List</h1>
+
+        <div className="row">
+          {products.map((product) => (
+            <div key={product._id} className="col-md-3 mb-4">
+              <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
+              <Link to={`/product/${product.store.slug.current}`} className="text-decoration-none">
+                <p className="text-center mt-2">View details</p>
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

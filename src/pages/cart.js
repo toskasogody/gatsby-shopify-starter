@@ -1,5 +1,8 @@
+// src/pages/cart.js
 import React, { useState, useEffect, useRef } from 'react';
 import ShopifyBuy from '@shopify/buy-button-js';
+import { RingLoader } from 'react-spinners';
+import Navbar from '../components/navbar'; // Import the Navbar component
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './cart.css';
 
@@ -15,7 +18,6 @@ const CartPage = () => {
 
     const ui = ShopifyBuy.UI.init(client);
 
-    // Create the cart component and store a reference to it
     ui.createComponent('cart', {
       node: document.getElementById('buy-button-cart'),
       options: {
@@ -36,19 +38,16 @@ const CartPage = () => {
       buyButtonRef.current = component;
       fetchCart(client);
 
-      // Poll for cart updates every 5 seconds
       const intervalId = setInterval(() => {
         fetchCart(client);
       }, 5000);
 
-      // Clear the interval when the component unmounts
       return () => clearInterval(intervalId);
     });
 
-    // Create a hidden product component to initialize the slider cart
     ui.createComponent('product', {
-      id: 'some-product-id', // Replace with an actual product ID
-      node: document.createElement('div'), // Create a hidden node
+      id: 'some-product-id',
+      node: document.createElement('div'),
       options: {
         product: {
           events: {
@@ -80,7 +79,6 @@ const CartPage = () => {
       buyButtonRef.current.model.attrs.lineItems = checkout.lineItems;
       buyButtonRef.current.view.render();
 
-      // Trigger the removeItem event to synchronize the slider cart
       const event = new CustomEvent('removeItem', {
         detail: {
           cart: checkout,
@@ -104,7 +102,6 @@ const CartPage = () => {
       buyButtonRef.current.model.attrs.lineItems = checkout.lineItems;
       buyButtonRef.current.view.render();
 
-      // Trigger the updateQuantity event to synchronize the slider cart
       const event = new CustomEvent('updateQuantity', {
         detail: {
           cart: checkout,
@@ -119,45 +116,52 @@ const CartPage = () => {
   };
 
   if (!cart) {
-    return <div>Loading...</div>;
+    return (
+      <div className="spinner-container">
+        <RingLoader color="#000080" />
+        <p className="loading-text">Loading...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="container cart-container">
-      <h1 className="cart-page-title">Your Shopping Cart</h1>
-      {cart.lineItems.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <div>
-          <ul className="cart-items">
-            {cart.lineItems.map((item) => (
-              <li key={item.id} className="cart-item">
-                <img src={item.variant.image.src} alt={item.title} className="cart-item-image" />
-                <div className="cart-item-details">
-                 
-                  <h2 className="cart-item-title">{item.title}</h2>
-                  <div className="cart-item-controls">
-                    <div className="cart-item-quantity">
-                      <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>+</button>
+    <>
+      <Navbar /> {/* Add Navbar */}
+      <div className="container cart-container">
+        <h1 className="cart-page-title">Your Shopping Cart</h1>
+        {cart.lineItems.length === 0 ? (
+          <p>Your cart is empty.</p>
+        ) : (
+          <div>
+            <ul className="cart-items">
+              {cart.lineItems.map((item) => (
+                <li key={item.id} className="cart-item">
+                  <img src={item.variant.image.src} alt={item.title} className="cart-item-image" />
+                  <div className="cart-item-details">
+                    <h2 className="cart-item-title">{item.title}</h2>
+                    <div className="cart-item-controls">
+                      <div className="cart-item-quantity">
+                        <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
+                        <span>{item.quantity}</span>
+                        <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>+</button>
+                      </div>
+                      <button onClick={() => handleRemove(item.id)} className="cart-item-remove">Remove</button>
                     </div>
-                    <button onClick={() => handleRemove(item.id)} className="cart-item-remove">Remove</button>
+                    <p className="cart-item-price">${item.variant.price.amount}</p>
                   </div>
-                  <p className="cart-item-price">${item.variant.price.amount}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <div className="cart-total">
-            <h3 className="total">Total: ${cart.subtotalPrice.amount}</h3>
-            <button onClick={handleCheckout} className="checkout-button">
-              Checkout
-            </button>
+                </li>
+              ))}
+            </ul>
+            <div className="cart-total">
+              <h3 className="total">Total: ${cart.subtotalPrice.amount}</h3>
+              <button onClick={handleCheckout} className="checkout-button">
+                Checkout
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 

@@ -1,14 +1,19 @@
-.text-center {
-  text-align: center;
-  font-size: 12px;
-  color: #4D4DDF;
+/* products.css */
+
+.navbar-custom {
+  background-color: #343a40;
 }
 
-.text-decoration-none {
-  text-decoration: none;
-  color: inherit;
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+  color: #ffffff;
 }
 
-.text-center.mt-2:hover {
-  text-decoration: underline;
+.navbar-custom .nav-link:hover {
+  color: #f8f9fa;
+}
+
+.navbar-logo {
+  max-height: 40px;
+  margin-right: 10px;
 }

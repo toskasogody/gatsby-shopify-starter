@@ -1,6 +1,8 @@
+// src/templates/product.js
 import React, { useEffect, useRef } from 'react';
 import { graphql } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
+import Navbar from '../components/navbar'; // Import the Navbar component
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './product.css';
 
@@ -85,11 +87,14 @@ const ProductPage = ({ data }) => {
   }, [product.store.id]);
 
   return (
-    <div className="product-container">
-      <div className="product-details pdp-details">
-        <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
+    <>
+      <Navbar /> {/* Add Navbar */}
+      <div className="product-container">
+        <div className="product-details pdp-details">
+          <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
