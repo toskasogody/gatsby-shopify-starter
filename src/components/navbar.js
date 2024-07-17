@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'gatsby';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from '../images/logo.png';
-import './navbar.css';
 
 
 const Navbar = () => {

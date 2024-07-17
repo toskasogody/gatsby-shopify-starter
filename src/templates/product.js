@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { graphql } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
-import Navbar from '../components/navbar'; // Import the Navbar component
+import Navbar from '../components/navbar'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './product.css';
 
@@ -68,7 +68,7 @@ const ProductPage = ({ data }) => {
                 'font-size': '12px',
                 'padding-top': '10px',
                 'padding-bottom': '10px',
-                'width': '100%', // Make the button full width
+                'width': '100%', 
                 ':hover': {
                   'background-color': '#4D4DDF',
                 },
@@ -88,7 +88,7 @@ const ProductPage = ({ data }) => {
 
   return (
     <>
-      <Navbar /> {/* Add Navbar */}
+      <Navbar /> {}
       <div className="product-container">
         <div className="product-details pdp-details">
           <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
