@@ -1,13 +1,13 @@
-// src/pages/cart.js
 import React, { useState, useEffect, useRef } from 'react';
 import ShopifyBuy from '@shopify/buy-button-js';
 import { RingLoader } from 'react-spinners';
-import Navbar from '../components/navbar'; // Import the Navbar component
+import Navbar from '../components/navbar'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './cart.css';
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(true);
   const buyButtonRef = useRef(null);
 
   useEffect(() => {
@@ -59,12 +59,19 @@ const CartPage = () => {
   }, []);
 
   const fetchCart = (client) => {
-    const cartId = buyButtonRef.current.model.id;
-    client.checkout.fetch(cartId).then((checkout) => {
-      setCart(checkout);
-      buyButtonRef.current.model.attrs.lineItems = checkout.lineItems;
-      buyButtonRef.current.view.render();
-    });
+    if (buyButtonRef.current && buyButtonRef.current.model && buyButtonRef.current.model.id) {
+      const cartId = buyButtonRef.current.model.id;
+      client.checkout.fetch(cartId).then((checkout) => {
+        setCart(checkout);
+        setLoading(false);
+        if (buyButtonRef.current.model.attrs) {
+          buyButtonRef.current.model.attrs.lineItems = checkout.lineItems;
+          buyButtonRef.current.view.render();
+        }
+      });
+    } else {
+      setLoading(false);
+    }
   };
 
   const handleRemove = (lineItemId) => {
@@ -115,7 +122,7 @@ const CartPage = () => {
     window.open(cart.webUrl);
   };
 
-  if (!cart) {
+  if (loading) {
     return (
       <div className="spinner-container">
         <RingLoader color="#000080" />
@@ -126,10 +133,10 @@ const CartPage = () => {
 
   return (
     <>
-      <Navbar /> {/* Add Navbar */}
+      <Navbar />
       <div className="container cart-container">
         <h1 className="cart-page-title">Your Shopping Cart</h1>
-        {cart.lineItems.length === 0 ? (
+        {cart && cart.lineItems.length === 0 ? (
           <p>Your cart is empty.</p>
         ) : (
           <div>
@@ -154,9 +161,11 @@ const CartPage = () => {
             </ul>
             <div className="cart-total">
               <h3 className="total">Total: ${cart.subtotalPrice.amount}</h3>
-              <button onClick={handleCheckout} className="checkout-button">
-                Checkout
-              </button>
+              {cart.lineItems.length > 0 && (
+                <button onClick={handleCheckout} className="checkout-button">
+                  Checkout
+                </button>
+              )}
             </div>
           </div>
         )}
