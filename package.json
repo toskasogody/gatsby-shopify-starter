@@ -10,6 +10,7 @@
     "@shopify/buy-button-js": "^2.4.0",
     "bootstrap": "^5.3.3",
     "gatsby": "^5.13.5",
+    "gatsby-adapter-netlify": "^1.1.7",
     "gatsby-plugin-image": "^3.13.1",
     "gatsby-plugin-manifest": "^5.13.1",
     "gatsby-plugin-sharp": "^5.13.1",
