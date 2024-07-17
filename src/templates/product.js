@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { graphql } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -27,7 +27,6 @@ export const query = graphql`
 
 const ProductPage = ({ data }) => {
   const { sanityProduct: product } = data;
-  const [selectedVariant, setSelectedVariant] = useState(product.store.variants[0]);
   const buyButtonRef = useRef(null);
 
   useEffect(() => {
@@ -52,6 +51,9 @@ const ProductPage = ({ data }) => {
               img: true,
               title: true,
               price: true,
+              quantity: true,
+              quantityIncrement: true,
+              quantityDecrement: true,
               quantityInput: true
             },
             text: {
@@ -73,15 +75,6 @@ const ProductPage = ({ data }) => {
                 },
               },
             },
-            events: {
-              variantSelected: (component) => {
-                const selectedVariant = component.selectedVariant;
-                const priceElement = document.getElementById(`price-${product.store.id}`);
-                if (priceElement) {
-                  priceElement.textContent = `$${selectedVariant.price}`;
-                }
-              },
-            },
           },
         },
       }).then((component) => {
@@ -91,43 +84,8 @@ const ProductPage = ({ data }) => {
     }
   }, [product.store.id]);
 
-  const handleVariantClick = (variant) => {
-    setSelectedVariant(variant);
-    const priceElement = document.getElementById(`price-${product.store.id}`);
-    if (priceElement) {
-      priceElement.textContent = `$${variant.store.price}`;
-    }
-
-    // Update the Shopify Buy Button variant selection
-    if (buyButtonRef.current) {
-      const selectElement = buyButtonRef.current.node.querySelector('.shopify-buy__option-select__select');
-      if (selectElement) {
-        const option = Array.from(selectElement.options).find(opt => opt.value === variant.store.title);
-        if (option) {
-          selectElement.value = option.value;
-          const event = new Event('change', { bubbles: true });
-          selectElement.dispatchEvent(event);
-        }
-      }
-    }
-  };
-
   return (
     <div className="product-container">
-      <div className="variant-options">
-        {product.store.variants.map((variant, index) => (
-          <button
-            key={index}
-            className="variant-image-button"
-            onClick={() => handleVariantClick(variant)}
-            style={{
-              backgroundImage: `url(${variant.store.previewImageUrl})`,
-            }}
-          >
-            <span className="sr-only">{variant.store.title}</span>
-          </button>
-        ))}
-      </div>
       <div className="product-details pdp-details">
         <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
       </div>
