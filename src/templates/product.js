@@ -93,7 +93,10 @@ const ProductPage = ({ data }) => {
       <Navbar />
       <div className="container">
         <div className="row">
-          <div className="col-md-12">
+          <div className="col-md-2">
+            {}
+          </div>
+          <div className="col-md-10">
             <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
           </div>
         </div>
