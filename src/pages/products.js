@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { graphql, Link } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './products.css'; // Ensure you have a CSS file for additional styling
+import './products.css'; 
 
 
 export const query = graphql`

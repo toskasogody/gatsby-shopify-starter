@@ -5,11 +5,7 @@
   padding: 20px;
 }
 
-.product-details {
-  display: flex;
-  width: 100%;
-  max-width: 900px;
-}
+
 
 .pdp-details {
   display: flex;
