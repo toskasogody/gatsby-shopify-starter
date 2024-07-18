@@ -22,6 +22,7 @@
   font-family: Arial, sans-serif;
   font-weight: normal;
   padding-top: 50px;
+  text-align: center;
 }
 
 .products-container h1 {
@@ -75,10 +76,25 @@
   }
 }
 .product-title-link {
-  text-decoration: none; /* Remove underline */
-  color: inherit; /* Inherit color */
+  text-decoration: none; 
+  color: inherit;
 }
 
 .product-title-link:hover .product-title {
-  color: #4D4DDF; /* Change to your desired hover color */
+  color: #4D4DDF; 
+}
+.button-add-to-cart {
+  background-color: #007bff; 
+  color: #ffffff;
+  border: none;
+  padding: 10px 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: auto;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.button-add-to-cart:hover {
+  background-color: #0056b3; /* Darker blue on hover */
 }

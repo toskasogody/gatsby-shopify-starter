@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { graphql, Link } from 'gatsby';
-import ShopifyBuy from '@shopify/buy-button-js';
-import Navbar from '../components/navbar'; // Import the Navbar component
+import { CartContext } from '../context/CartContext';
+import Navbar from '../components/navbar';
+import CustomSliderCart from '../components/CustomSliderCart'; // Import the slider cart component
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './products.css'; // Ensure you have a CSS file for additional styling
+import './products.css';
 
 export const query = graphql`
   {
@@ -33,6 +34,8 @@ export const query = graphql`
 
 const ProductsPage = ({ data }) => {
   const [products, setProducts] = useState([]);
+  const { addToCart } = useContext(CartContext);
+  const [notification, setNotification] = useState('');
 
   useEffect(() => {
     if (data && data.allSanityProduct && data.allSanityProduct.nodes) {
@@ -41,61 +44,28 @@ const ProductsPage = ({ data }) => {
   }, [data]);
 
   useEffect(() => {
-    if (process.env.GATSBY_SHOPIFY_STORE_DOMAIN && process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
-      const client = ShopifyBuy.buildClient({
-        domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
-        storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-      });
+    if (notification) {
+      const timer = setTimeout(() => {
+        setNotification('');
+      }, 3000);
 
-      const ui = ShopifyBuy.UI.init(client);
-
-      products.forEach((product) => {
-        if (product.store.id) {
-          const firstVariantId = product.store.variants[0].id;
-          console.log(`Creating buy button for product ID: ${product.store.id} with variant ID: ${firstVariantId}`);
-          ui.createComponent('product', {
-            id: product.store.id,
-            node: document.getElementById(`buy-button-${product.store.id}`),
-            moneyFormat: '%24%7B%7Bamount%7D%7D',
-            options: {
-              product: {
-                buttonDestination: 'cart',
-                layout: 'vertical',
-                width: '240px',
-                variantId: firstVariantId, // Ensure the first variant is used
-                contents: {
-                  img: false,
-                  title: false,
-                  price: false,
-                  options: false, // Hide options (variant selection)
-                },
-                text: {
-                  button: 'ADD TO CART',
-                },
-                styles: {
-                  button: {
-                    'background-color': '#000080', // Change to your desired background color
-                    'font-family': 'Arial, sans-serif',
-                    'font-size': '12px',
-                    'padding-top': '10px',
-                    'padding-bottom': '10px',
-                    ':hover': {
-                      'background-color': '#4D4DDF', // Change to your desired hover background color
-                    },
-                    ':focus': {
-                      'background-color': '#8E8EF4', // Change to your desired focus background color
-                    },
-                  },
-                },
-              },
-            },
-          });
-        }
-      });
-    } else {
-      console.error('Shopify domain or storefront access token is not set.');
+      return () => clearTimeout(timer);
     }
-  }, [products]);
+  }, [notification]);
+
+  const handleAddToCart = (product) => {
+    const defaultVariant = product.store.variants[0]; // Assuming first variant is default
+    addToCart({
+      id: defaultVariant.id,
+      title: product.store.title,
+      variant: {
+        price: defaultVariant.store.price, // Include price from default variant
+        previewImageUrl: defaultVariant.store.previewImageUrl // Include preview image URL from default variant
+      }
+    });
+    setNotification(`${product.store.title} has been added to the cart`);
+  };
+  
 
   if (products.length === 0) {
     return <p>No products available</p>;
@@ -103,7 +73,8 @@ const ProductsPage = ({ data }) => {
 
   return (
     <>
-      <Navbar /> {/* Add the Navbar component */}
+      <Navbar />
+      <CustomSliderCart />
       <div className="container products-container">
         <h1>Product List</h1>
         <div className="row">
@@ -115,15 +86,18 @@ const ProductsPage = ({ data }) => {
                 </div>
                 <div className="product-details mt-2">
                   <h2 className="product-title">{product.store.title || 'No Title'}</h2>
-                  <p id={`price-${product.store.id}`} className="product-price">
+                  <p className="product-price">
                     {product.store.variants[0].store.price ? `$${product.store.variants[0].store.price}` : 'No Price'}
                   </p>
                 </div>
               </Link>
-              <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
+              <button className="button-add-to-cart" onClick={() => handleAddToCart(product)}>Add to Cart</button>
             </div>
           ))}
         </div>
+      </div>
+      <div className={`notification ${notification ? 'show' : ''}`}>
+        {notification}
       </div>
     </>
   );

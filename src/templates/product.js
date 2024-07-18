@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { graphql } from 'gatsby';
-import ShopifyBuy from '@shopify/buy-button-js';
+import { CartContext } from '../context/CartContext'; 
 import Slider from 'react-slick';
 import Navbar from '../components/navbar';
+import CustomSliderCart from '../components/CustomSliderCart';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './product.css';
+import './product.css'; 
 
 export const query = graphql`
   query($id: String!) {
@@ -34,67 +35,8 @@ export const query = graphql`
 const ProductPage = ({ data }) => {
   const { sanityProduct: product } = data;
   const [selectedVariant, setSelectedVariant] = useState(product.store.variants[0]);
-  const buyButtonRef = useRef(null);
+  const { addToCart } = useContext(CartContext);
   const sliderRef = useRef(null);
-
-  useEffect(() => {
-    const client = ShopifyBuy.buildClient({
-      domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
-      storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-    });
-
-    const ui = ShopifyBuy.UI.init(client);
-
-    if (product.store.id) {
-      ui.createComponent('product', {
-        id: product.store.id,
-        node: document.getElementById(`buy-button-${product.store.id}`),
-        moneyFormat: '%24%7B%7Bamount%7D%7D',
-        options: {
-          product: {
-            buttonDestination: 'cart',
-            layout: 'vertical',
-            width: '240px',
-            contents: {
-              img: false,
-              title: false,
-              price: true
-            },
-            text: {
-              button: 'ADD TO CART',
-            },
-            styles: {
-              product: {
-                'text-align': 'left',
-              },
-              button: {
-                'background-color': '#000080',
-                'font-family': 'Arial, sans-serif',
-                'font-size': '12px',
-                'padding-top': '10px',
-                'padding-bottom': '10px',
-                'width': '100%', 
-                ':hover': {
-                  'background-color': '#4D4DDF',
-                },
-                ':focus': {
-                  'background-color': '#8E8EF4',
-                },
-              },
-              price: { // Add custom styles for the price
-                'font-size': '2rem',
-                'font-weight': 'bold',
-                'color': '#333',
-              },
-            },
-          },
-        },
-      }).then((component) => {
-        buyButtonRef.current = component;
-        console.log('Buy Button Component:', buyButtonRef.current);
-      });
-    }
-  }, [product.store.id]);
 
   const handleVariantClick = (variant) => {
     setSelectedVariant(variant);
@@ -102,6 +44,14 @@ const ProductPage = ({ data }) => {
 
   const handleSlideChange = (index) => {
     setSelectedVariant(product.store.variants[index]);
+  };
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: selectedVariant.id,
+      title: product.store.title,
+      variant: selectedVariant,
+    });
   };
 
   const settings = {
@@ -117,6 +67,7 @@ const ProductPage = ({ data }) => {
   return (
     <>
       <Navbar />
+      <CustomSliderCart />
       <div className="container product-container">
         <div className="row">
           <div className="col-md-2">
@@ -156,7 +107,7 @@ const ProductPage = ({ data }) => {
             />
             <div className="product-info pdp-info">
               <h1 className="product-title pdp-title">{product.store.title}</h1>
-              <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
+              <button className="button-add-to-cart" onClick={handleAddToCart}>Add to Cart</button>
             </div>
           </div>
         </div>
