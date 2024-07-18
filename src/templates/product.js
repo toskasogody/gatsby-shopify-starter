@@ -58,24 +58,33 @@ const ProductPage = ({ data }) => {
             contents: {
               img: false,
               title: false,
+              price: true
             },
             text: {
               button: 'ADD TO CART',
             },
             styles: {
+              product: {
+                'text-align': 'left',
+              },
               button: {
                 'background-color': '#000080',
                 'font-family': 'Arial, sans-serif',
                 'font-size': '12px',
                 'padding-top': '10px',
                 'padding-bottom': '10px',
-                'width': '100%', // Make the button full width
+                'width': '100%', 
                 ':hover': {
                   'background-color': '#4D4DDF',
                 },
                 ':focus': {
                   'background-color': '#8E8EF4',
                 },
+              },
+              price: { // Add custom styles for the price
+                'font-size': '2rem',
+                'font-weight': 'bold',
+                'color': '#333',
               },
             },
           },
