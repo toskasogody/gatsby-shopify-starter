@@ -1,10 +1,9 @@
-// src/pages/products.js
 import React, { useState, useEffect } from 'react';
 import { graphql, Link } from 'gatsby';
 import ShopifyBuy from '@shopify/buy-button-js';
 import Navbar from '../components/navbar'; // Import the Navbar component
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './products.css';
+import './products.css'; // Ensure you have a CSS file for additional styling
 
 export const query = graphql`
   {
@@ -62,38 +61,24 @@ const ProductsPage = ({ data }) => {
               product: {
                 buttonDestination: 'cart',
                 layout: 'vertical',
-                width: '100%', // Ensure the button spans the full width of the container
+                width: '240px',
                 variantId: firstVariantId, // Ensure the first variant is used
                 contents: {
-                  img: true,
-                  title: true,
-                  price: true,
-                  options: false,
+                  img: false,
+                  title: false,
+                  price: false,
+                  options: false, // Hide options (variant selection)
                 },
                 text: {
                   button: 'ADD TO CART',
                 },
                 styles: {
-                  product: {
-                    'text-align': 'center',
-                    'font-family': 'Arial, sans-serif',
-                  },
-                  title: {
-                    'font-size': '14px',
-                    'color': '#333',
-                    'font-weight': '300'
-                  },
-                  price: {
-                    'font-size': '14px',
-                    'color': '#666',
-                  },
                   button: {
                     'background-color': '#000080', // Change to your desired background color
                     'font-family': 'Arial, sans-serif',
-                    'font-size': '10px',
+                    'font-size': '12px',
                     'padding-top': '10px',
                     'padding-bottom': '10px',
-                    'width': '70%',
                     ':hover': {
                       'background-color': '#4D4DDF', // Change to your desired hover background color
                     },
@@ -118,17 +103,24 @@ const ProductsPage = ({ data }) => {
 
   return (
     <>
-      <Navbar /> {/* Add Navbar */}
-      <div className="container">
-        <h1 className="h5 my-5 font-weight-light">Product List</h1>
-
+      <Navbar /> {/* Add the Navbar component */}
+      <div className="container products-container">
+        <h1>Product List</h1>
         <div className="row">
           {products.map((product) => (
             <div key={product._id} className="col-md-3 mb-4">
-              <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
-              <Link to={`/product/${product.store.slug.current}`} className="text-decoration-none">
-                <p className="text-center mt-2">View details</p>
+              <Link to={`/product/${product.store.slug.current}`} className="product-title-link">
+                <div className="product-image">
+                  <img src={product.store.previewImageUrl} className="img-fluid" alt={product.store.title} />
+                </div>
+                <div className="product-details mt-2">
+                  <h2 className="product-title">{product.store.title || 'No Title'}</h2>
+                  <p id={`price-${product.store.id}`} className="product-price">
+                    {product.store.variants[0].store.price ? `$${product.store.variants[0].store.price}` : 'No Price'}
+                  </p>
+                </div>
               </Link>
+              <div id={`buy-button-${product.store.id}`} className="buy-button-placeholder"></div>
             </div>
           ))}
         </div>

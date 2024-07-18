@@ -1,22 +1,84 @@
-
-.variant-options {
+.product-container {
+  font-family: Arial, sans-serif;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-right: 20px;
-  background-color: red;
+  width: fit-content;
+  margin: auto;
+  margin-top: 50px;
+}
+
+
+.variant-image-button:focus,
+.variant-image-button:hover {
+  outline: none;
+  border: 2px solid #000080;
+}
+
+.pdp-details {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  text-align: left;
+  gap: 20px;
   width: fit-content;
 }
 
+.product-preview {
+  max-height: 80vh; 
+  width: auto;
+}
+
+.pdp-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  align-items: left;
+  justify-content: left;
+}
+
+.pdp-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+
+.buy-button-placeholder {
+  margin-top: 20px;
+  max-width: fit-content !important;
+}
+
+.slider-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.variant-image-slide {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
 .variant-image-button {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   background-size: cover;
-  background-position: center;
-  border: 1px solid #ccc;
+  border: none;
+  margin-bottom: 10px;
   cursor: pointer;
 }
 
-.variant-image-button:hover {
-  border-color: #000080;
+.slider-arrow {
+  font-size: 24px;
+  cursor: pointer;
+  margin: 5px 0;
+  color: #bababa;
+}
+
+.slider-arrow-up {
+  margin-bottom: auto;
+}
+
+.slider-arrow-down {
+  margin-top: auto;
 }
