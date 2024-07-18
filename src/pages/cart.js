@@ -14,7 +14,7 @@ const CartPage = () => {
   const calculateTotal = () => {
     return cart.reduce((total, item) => {
       return total + item.quantity * item.variant.price;
-    }, 0).toFixed(2); // Ensure total is formatted to 2 decimal places
+    }, 0).toFixed(2); 
   };
 
   if (!cart.length) {
@@ -53,7 +53,7 @@ const CartPage = () => {
           <div className="cart-total">
             <h3 className="total">Total: ${calculateTotal()}</h3>
             {cart.length > 0 && (
-              <button className="" onClick={handleCheckout} className="checkout-button">
+              <button onClick={handleCheckout} className="checkout-button">
                 Checkout
               </button>
             )}

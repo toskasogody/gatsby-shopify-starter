@@ -12,6 +12,15 @@ const CustomSliderCart = () => {
     setIsOpen(!isOpen);
   };
 
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + item.quantity * item.variant.price, 0);
+  };
+
+  // Dummy function for checkout
+  const handleCheckout = () => {
+    alert('Implement your checkout logic here!');
+  };
+
   return (
     <div className={`slider-cart ${isOpen ? 'open' : ''}`}>
       <button className="cart-toggle-button" onClick={handleToggleCart}>
@@ -25,18 +34,26 @@ const CustomSliderCart = () => {
               <li key={item.id} className="cart-item">
                 <img src={item.variant.previewImageUrl} alt={item.title} />
                 <div className="item-details">
-                  <h3>{item.title}</h3>
-                  <div className="quantity-controls">
-                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
-                    <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                  <h3 className="item-title">{item.title}</h3>
+                  <div className="item-info">
+                    <div className="quantity-controls">
+                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                    </div>
+                    <p className="item-price">${item.variant.price}</p>
                   </div>
-                  <button onClick={() => removeFromCart(item.id)}>Remove</button>
-                  <p>${item.variant.price}</p>
+                  <button onClick={() => removeFromCart(item.id)} className="remove-button">Remove</button>
                 </div>
               </li>
             ))}
           </ul>
+          <div className="cart-total">
+            <h3>Total: ${calculateTotal().toFixed(2)}</h3>
+            <button className="checkout-button" onClick={handleCheckout}>
+              Checkout
+            </button>
+          </div>
         </div>
       )}
     </div>
