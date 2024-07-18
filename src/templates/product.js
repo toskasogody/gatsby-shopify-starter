@@ -100,6 +100,10 @@ const ProductPage = ({ data }) => {
     setSelectedVariant(variant);
   };
 
+  const handleSlideChange = (index) => {
+    setSelectedVariant(product.store.variants[index]);
+  };
+
   const settings = {
     vertical: true,
     verticalSwiping: true,
@@ -107,6 +111,7 @@ const ProductPage = ({ data }) => {
     slidesToShow: 3,
     slidesToScroll: 1,
     arrows: false,
+    beforeChange: (current, next) => handleSlideChange(next),
   };
 
   return (
