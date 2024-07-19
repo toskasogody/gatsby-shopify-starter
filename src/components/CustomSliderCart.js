@@ -1,16 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faTimes } from '@fortawesome/free-solid-svg-icons';
 import './CustomSliderCart.css';
 
 const CustomSliderCart = () => {
-  const { cart, removeFromCart, updateQuantity, createCheckout } = useContext(CartContext);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleToggleCart = () => {
-    setIsOpen(!isOpen);
-  };
+  const { cart, removeFromCart, updateQuantity, createCheckout, isCartOpen, toggleCart } = useContext(CartContext);
 
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.quantity * parseFloat(item.variant.price.amount), 0).toFixed(2);
@@ -26,11 +21,11 @@ const CustomSliderCart = () => {
   };
 
   return (
-    <div className={`slider-cart ${isOpen ? 'open' : ''}`}>
-      <button className="cart-toggle-button" onClick={handleToggleCart}>
-        <FontAwesomeIcon icon={isOpen ? faTimes : faShoppingCart} />
+    <div className={`slider-cart ${isCartOpen ? 'open' : ''}`}>
+      <button className="cart-toggle-button" onClick={toggleCart}>
+        <FontAwesomeIcon icon={isCartOpen ? faTimes : faShoppingCart} />
       </button>
-      {isOpen && (
+      {isCartOpen && (
         <div className="cart-content">
           <h2>Your Cart</h2>
           <ul className="cart-items">

@@ -7,10 +7,12 @@ const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [checkout, setCheckout] = useState(null);
   const [products, setProducts] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const client = Client.buildClient({ domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
-    storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN
-  // Replace with your storefront access token
+  const client = Client.buildClient({
+    domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
+    storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+ 
   });
 
   useEffect(() => {
@@ -57,11 +59,15 @@ const CartProvider = ({ children }) => {
       return;
     }
 
-    const variantId = product.variants[0].id; // Assuming first variant is default
+    if (!product.variant || !product.variant.id) {
+      console.error('No variant available for this product');
+      return;
+    }
+
     const lineItemsToAdd = [
       {
-        variantId,
-        quantity: 1,
+        variantId: product.variant.id,
+        quantity: product.quantity || 1,
       },
     ];
 
@@ -69,6 +75,7 @@ const CartProvider = ({ children }) => {
       const newCheckout = await client.checkout.addLineItems(checkout.id, lineItemsToAdd);
       setCheckout(newCheckout);
       setCart(newCheckout.lineItems); // Update cart state with line items
+      setIsCartOpen(true); // Open the cart slider
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
@@ -119,8 +126,12 @@ const CartProvider = ({ children }) => {
     return checkout.webUrl;
   };
 
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
+
   return (
-    <CartContext.Provider value={{ cart, products, addToCart, removeFromCart, updateQuantity, createCheckout }}>
+    <CartContext.Provider value={{ cart, products, addToCart, removeFromCart, updateQuantity, createCheckout, isCartOpen, toggleCart }}>
       {children}
     </CartContext.Provider>
   );

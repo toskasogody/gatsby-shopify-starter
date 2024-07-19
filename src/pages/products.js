@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './products.css';
 
 const ProductsPage = () => {
-  const { products, addToCart } = useContext(CartContext);
+  const { products, addToCart, toggleCart } = useContext(CartContext);
   const [notification, setNotification] = useState('');
 
   useEffect(() => {
@@ -21,11 +21,17 @@ const ProductsPage = () => {
   }, [notification]);
 
   const handleAddToCart = (product) => {
-    addToCart(product);
+    addToCart({
+      id: product.id,
+      title: product.title,
+      variant: product.variants[0],
+      quantity: 1,
+    });
+    toggleCart(); // Open the cart slider
     setNotification(`${product.title} has been added to the cart`);
   };
 
-  if (!products || products.length === 0) { // Ensure products is defined
+  if (!products || products.length === 0) {
     return <p>No products available</p>;
   }
 
