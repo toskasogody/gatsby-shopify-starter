@@ -1,20 +1,23 @@
 import React, { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
-import Navbar from '../components/navbar'; 
+import Navbar from '../components/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './cart.css';
 
 const CartPage = () => {
-  const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
-
-  const handleCheckout = () => {
-    // Implement checkout logic
-  };
+  const { cart, removeFromCart, updateQuantity, createCheckout } = useContext(CartContext);
 
   const calculateTotal = () => {
-    return cart.reduce((total, item) => {
-      return total + item.quantity * item.variant.price;
-    }, 0).toFixed(2); 
+    return cart.reduce((total, item) => total + item.quantity * parseFloat(item.variant.price.amount), 0).toFixed(2);
+  };
+
+  const handleCheckout = async () => {
+    const checkoutUrl = await createCheckout();
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+    } else {
+      alert('Failed to create checkout. Please try again.');
+    }
   };
 
   if (!cart.length) {
@@ -34,7 +37,7 @@ const CartPage = () => {
           <ul className="cart-items">
             {cart.map((item) => (
               <li key={item.id} className="cart-item">
-                <img src={item.variant.previewImageUrl} alt={item.title} className="cart-item-image" />
+                <img src={item.variant.image.src} alt={item.title} className="cart-item-image" />
                 <div className="cart-item-details">
                   <h2 className="cart-item-title">{item.title}</h2>
                   <div className="cart-item-controls">
@@ -45,7 +48,7 @@ const CartPage = () => {
                     </div>
                     <button onClick={() => removeFromCart(item.id)} className="cart-item-remove">Remove</button>
                   </div>
-                  <p className="cart-item-price">${item.variant.price}</p>
+                  <p className="cart-item-price">${item.variant.price.amount}</p>
                 </div>
               </li>
             ))}

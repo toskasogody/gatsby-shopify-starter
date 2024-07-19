@@ -1,47 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { graphql, Link } from 'gatsby';
+import { Link } from 'gatsby';
 import { CartContext } from '../context/CartContext';
 import Navbar from '../components/navbar';
 import CustomSliderCart from '../components/CustomSliderCart'; // Import the slider cart component
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './products.css';
 
-export const query = graphql`
-  {
-    allSanityProduct {
-      nodes {
-        _id
-        store {
-          title
-          id
-          slug {
-            current
-          }
-          previewImageUrl
-          variants {
-            id
-            store {
-              price
-              title
-              previewImageUrl
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-const ProductsPage = ({ data }) => {
-  const [products, setProducts] = useState([]);
-  const { addToCart } = useContext(CartContext);
+const ProductsPage = () => {
+  const { products, addToCart } = useContext(CartContext);
   const [notification, setNotification] = useState('');
-
-  useEffect(() => {
-    if (data && data.allSanityProduct && data.allSanityProduct.nodes) {
-      setProducts(data.allSanityProduct.nodes);
-    }
-  }, [data]);
 
   useEffect(() => {
     if (notification) {
@@ -54,20 +21,11 @@ const ProductsPage = ({ data }) => {
   }, [notification]);
 
   const handleAddToCart = (product) => {
-    const defaultVariant = product.store.variants[0]; // Assuming first variant is default
-    addToCart({
-      id: defaultVariant.id,
-      title: product.store.title,
-      variant: {
-        price: defaultVariant.store.price, // Include price from default variant
-        previewImageUrl: defaultVariant.store.previewImageUrl // Include preview image URL from default variant
-      }
-    });
-    setNotification(`${product.store.title} has been added to the cart`);
+    addToCart(product);
+    setNotification(`${product.title} has been added to the cart`);
   };
-  
 
-  if (products.length === 0) {
+  if (!products || products.length === 0) { // Ensure products is defined
     return <p>No products available</p>;
   }
 
@@ -79,15 +37,15 @@ const ProductsPage = ({ data }) => {
         <h1>Product List</h1>
         <div className="row">
           {products.map((product) => (
-            <div key={product._id} className="col-md-3 mb-4">
-              <Link to={`/product/${product.store.slug.current}`} className="product-title-link">
+            <div key={product.id} className="col-md-3 mb-4">
+              <Link to={`/product/${product.handle}`} className="product-title-link">
                 <div className="product-image">
-                  <img src={product.store.previewImageUrl} className="img-fluid" alt={product.store.title} />
+                  <img src={product.images[0].src} className="img-fluid" alt={product.title} />
                 </div>
                 <div className="product-details mt-2">
-                  <h2 className="product-title">{product.store.title || 'No Title'}</h2>
+                  <h2 className="product-title">{product.title || 'No Title'}</h2>
                   <p className="product-price">
-                    {product.store.variants[0].store.price ? `$${product.store.variants[0].store.price}` : 'No Price'}
+                    {product.variants[0].price.amount ? `$${product.variants[0].price.amount}` : 'No Price'}
                   </p>
                 </div>
               </Link>

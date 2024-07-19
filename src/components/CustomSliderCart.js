@@ -5,7 +5,7 @@ import { faShoppingCart, faTimes } from '@fortawesome/free-solid-svg-icons';
 import './CustomSliderCart.css';
 
 const CustomSliderCart = () => {
-  const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
+  const { cart, removeFromCart, updateQuantity, createCheckout } = useContext(CartContext);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleToggleCart = () => {
@@ -13,12 +13,16 @@ const CustomSliderCart = () => {
   };
 
   const calculateTotal = () => {
-    return cart.reduce((total, item) => total + item.quantity * item.variant.price, 0);
+    return cart.reduce((total, item) => total + item.quantity * parseFloat(item.variant.price.amount), 0).toFixed(2);
   };
 
-  // Dummy function for checkout
-  const handleCheckout = () => {
-    alert('Implement your checkout logic here!');
+  const handleCheckout = async () => {
+    const checkoutUrl = await createCheckout();
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+    } else {
+      alert('Failed to create checkout. Please try again.');
+    }
   };
 
   return (
@@ -32,7 +36,7 @@ const CustomSliderCart = () => {
           <ul className="cart-items">
             {cart.map((item) => (
               <li key={item.id} className="cart-item">
-                <img src={item.variant.previewImageUrl} alt={item.title} />
+                <img src={item.variant.image.src} alt={item.title} />
                 <div className="item-details">
                   <h3 className="item-title">{item.title}</h3>
                   <div className="item-info">
@@ -41,7 +45,7 @@ const CustomSliderCart = () => {
                       <span>{item.quantity}</span>
                       <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
                     </div>
-                    <p className="item-price">${item.variant.price}</p>
+                    <p className="item-price">${item.variant.price.amount}</p>
                   </div>
                   <button onClick={() => removeFromCart(item.id)} className="remove-button">Remove</button>
                 </div>
@@ -49,7 +53,7 @@ const CustomSliderCart = () => {
             ))}
           </ul>
           <div className="cart-total">
-            <h3>Total: ${calculateTotal().toFixed(2)}</h3>
+            <h3>Total: ${calculateTotal()}</h3>
             <button className="checkout-button" onClick={handleCheckout}>
               Checkout
             </button>

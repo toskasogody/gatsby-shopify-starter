@@ -3,7 +3,7 @@ import { graphql } from 'gatsby';
 import { CartContext } from '../context/CartContext'; 
 import Slider from 'react-slick';
 import Navbar from '../components/navbar';
-import CustomSliderCart from '../components/CustomSliderCart';
+import CustomSliderCart from '../components/CustomSliderCart'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import 'slick-carousel/slick/slick.css';
