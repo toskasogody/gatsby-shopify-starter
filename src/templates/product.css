@@ -88,28 +88,13 @@
 .quantity-controls {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
-.quantity-controls button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  font-size: 16px;
+.quantity-display {
+  width: 40px;
+  text-align: center;
 }
-
-.quantity-controls span {
-  margin: 0 10px;
-  font-size: 16px;
-}
-
-.quantity-controls button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
 
 @media (max-width: 1200px) {
   .product-container {

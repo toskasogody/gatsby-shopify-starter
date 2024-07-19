@@ -21,12 +21,14 @@ const ProductsPage = () => {
   }, [notification]);
 
   const handleAddToCart = (product) => {
-    addToCart({
+    const productToAdd = {
       id: product.id,
       title: product.title,
       variant: product.variants[0],
       quantity: 1,
-    });
+    };
+    console.log('Adding to cart:', productToAdd); // Log product being added
+    addToCart(productToAdd);
     toggleCart(); // Open the cart slider
     setNotification(`${product.title} has been added to the cart`);
   };

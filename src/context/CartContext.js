@@ -12,7 +12,6 @@ const CartProvider = ({ children }) => {
   const client = Client.buildClient({
     domain: process.env.GATSBY_SHOPIFY_STORE_DOMAIN,
     storefrontAccessToken: process.env.GATSBY_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
- 
   });
 
   useEffect(() => {
@@ -24,6 +23,7 @@ const CartProvider = ({ children }) => {
           if (!existingCheckout.completedAt) {
             setCheckout(existingCheckout);
             setCart(existingCheckout.lineItems);
+            console.log('Fetched existing checkout:', existingCheckout);
             return;
           }
         } catch (error) {
@@ -35,6 +35,7 @@ const CartProvider = ({ children }) => {
         const newCheckout = await client.checkout.create();
         setCheckout(newCheckout);
         localStorage.setItem('checkoutId', newCheckout.id);
+        console.log('Created new checkout:', newCheckout);
       } catch (error) {
         console.error('Failed to create initial checkout:', error);
       }
@@ -44,14 +45,20 @@ const CartProvider = ({ children }) => {
       try {
         const fetchedProducts = await client.product.fetchAll();
         setProducts(fetchedProducts);
+        console.log('Fetched products:', fetchedProducts);
       } catch (error) {
         console.error('Failed to fetch products:', error);
       }
     };
 
-    initializeCheckout();
-    fetchAllProducts();
-  }, []);
+    if (!checkout) {
+      initializeCheckout();
+    }
+    
+    if (products.length === 0) {
+      fetchAllProducts();
+    }
+  }, [checkout, products.length, client]);
 
   const addToCart = async (product) => {
     if (!checkout) {
@@ -72,10 +79,13 @@ const CartProvider = ({ children }) => {
     ];
 
     try {
+      console.log('Adding line items to checkout:', checkout.id, lineItemsToAdd);
       const newCheckout = await client.checkout.addLineItems(checkout.id, lineItemsToAdd);
       setCheckout(newCheckout);
       setCart(newCheckout.lineItems); // Update cart state with line items
       setIsCartOpen(true); // Open the cart slider
+      console.log('Cart state after adding:', newCheckout.lineItems); // Log updated cart
+      console.log('Checkout state after adding:', newCheckout); // Log updated checkout
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
@@ -91,6 +101,7 @@ const CartProvider = ({ children }) => {
       const newCheckout = await client.checkout.removeLineItems(checkout.id, [lineItemId]);
       setCheckout(newCheckout);
       setCart(newCheckout.lineItems); // Update cart state with line items
+      console.log('Cart state after removing:', newCheckout.lineItems); // Log updated cart
     } catch (error) {
       console.error('Error removing from cart:', error);
     }
@@ -113,6 +124,7 @@ const CartProvider = ({ children }) => {
       const newCheckout = await client.checkout.updateLineItems(checkout.id, lineItemsToUpdate);
       setCheckout(newCheckout);
       setCart(newCheckout.lineItems); // Update cart state with line items
+      console.log('Cart state after updating quantity:', newCheckout.lineItems); // Log updated cart
     } catch (error) {
       console.error('Error updating cart quantity:', error);
     }
