@@ -2,10 +2,11 @@ import React, { useContext } from 'react';
 import { CartContext } from '../context/CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faTimes } from '@fortawesome/free-solid-svg-icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './CustomSliderCart.css';
 
 const CustomSliderCart = () => {
-  const { cart, removeFromCart, updateQuantity, createCheckout, isCartOpen, toggleCart } = useContext(CartContext);
+  const { cart, updateQuantity, createCheckout, isCartOpen, toggleCart } = useContext(CartContext);
 
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.quantity * parseFloat(item.variant.price.amount), 0).toFixed(2);
@@ -21,40 +22,44 @@ const CustomSliderCart = () => {
   };
 
   return (
-    <div className={`slider-cart ${isCartOpen ? 'open' : ''}`}>
-      <button className="cart-toggle-button" onClick={toggleCart}>
+    <div>
+      <button className={`cart-toggle-button ${isCartOpen ? 'cart-open' : ''}`} onClick={toggleCart}>
         <FontAwesomeIcon icon={isCartOpen ? faTimes : faShoppingCart} />
       </button>
-      {isCartOpen && (
-        <div className="cart-content">
-          <h2>Your Cart</h2>
-          <ul className="cart-items">
-            {cart.map((item) => (
-              <li key={item.id} className="cart-item">
-                <img src={item.variant.image.src} alt={item.title} />
-                <div className="item-details">
-                  <h3 className="item-title">{item.title}</h3>
-                  <div className="item-info">
-                    <div className="quantity-controls">
-                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+      <div className={`slider-cart ${isCartOpen ? 'open' : ''}`}>
+        {isCartOpen && (
+          <div className="cart-content">
+            <div className="cart-header">
+              <h2>Cart</h2>
+            </div>
+            <ul className="cart-items list-group list-group-flush">
+              {cart.map((item) => (
+                <li key={item.id} className="cart-item list-group-item d-flex align-items-center">
+                  <img src={item.variant.image.src} alt={item.title} className="img-thumbnail" />
+                  <div className="item-details ms-3">
+                    <h3 className="item-title text-truncate">{item.title}</h3>
+                    <div className="item-info d-flex align-items-center justify-content-between">
+                      <div className="quantity-controls input-group">
+                        <button className="btn btn-outline-secondary btn-quantity" onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>-</button>
+                        <span className="quantity-display input-group-text">{item.quantity}</span>
+                        <button className="btn btn-outline-secondary btn-quantity" onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                      </div>
+                      <p className="item-price ms-3 mb-0">${item.variant.price.amount}</p>
                     </div>
-                    <p className="item-price">${item.variant.price.amount}</p>
                   </div>
-                  <button onClick={() => removeFromCart(item.id)} className="remove-button">Remove</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <div className="cart-total">
-            <h3>Total: ${calculateTotal()}</h3>
-            <button className="checkout-button" onClick={handleCheckout}>
+                </li>
+              ))}
+            </ul>
+            <div className="cart-total mt-3 d-flex justify-content-between">
+              <span>Subtotal</span>
+              <span>${calculateTotal()}</span>
+            </div>
+            <button className="btn btn-success w-100 mt-3" onClick={handleCheckout}>
               Checkout
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
