@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'gatsby';
 import { CartContext } from '../context/CartContext';
 import Navbar from '../components/navbar';
-import CustomSliderCart from '../components/CustomSliderCart'; // Import the slider cart component
+import CustomSliderCart from '../components/CustomSliderCart'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './products.css';
 
@@ -29,7 +29,7 @@ const ProductsPage = () => {
     };
     console.log('Adding to cart:', productToAdd); // Log product being added
     addToCart(productToAdd);
-    toggleCart(); // Open the cart slider
+    toggleCart(); 
     setNotification(`${product.title} has been added to the cart`);
   };
 

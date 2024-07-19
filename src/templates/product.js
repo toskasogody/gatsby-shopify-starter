@@ -20,8 +20,8 @@ export const query = graphql`
         id
         previewImageUrl
         variants {
-          id
           store {
+            id
             price
             title
             previewImageUrl
@@ -47,9 +47,9 @@ const ProductPage = ({ data }) => {
   };
 
   const handleAddToCart = async () => {
-    const defaultVariant = product.store.variants[0]; // Use the default variant (index 0)
-    const variantId = `gid://shopify/ProductVariant/${defaultVariant.id}`;
-    const productId = product._id.split('-').pop(); // Extract the actual product ID
+    const defaultVariant = product.store.variants[0]; // default variant 
+    const variantId = `gid://shopify/ProductVariant/${defaultVariant.store.id}`;
+    const productId = product.store.id; // Extract the actual product ID
     const productToAdd = {
       id: `gid://shopify/Product/${productId}`,
       title: product.store.title,
