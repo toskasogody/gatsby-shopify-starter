@@ -10,3 +10,7 @@
 exports.onRenderBody = ({ setHtmlAttributes }) => {
   setHtmlAttributes({ lang: `en` })
 }
+
+export const wrapRootElement = ({ element }) => (
+  <CartProvider>{element}</CartProvider>
+);
