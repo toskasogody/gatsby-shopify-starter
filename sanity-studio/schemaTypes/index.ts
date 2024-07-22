@@ -6,10 +6,6 @@ import { collectionGroupType } from './objects/collection/collectionGroupType';
 import { collectionLinksType } from './objects/collection/collectionLinksType';
 import { collectionReferenceType } from './objects/module/collectionReferenceType';
 import { collectionRuleType } from './objects/shopify/collectionRuleType';
-import { customProductOptionColorObjectType } from './objects/customProductOption/customProductOptionColorObjectType';
-import { customProductOptionColorType } from './objects/customProductOption/customProductOptionColorType';
-import { customProductOptionSizeObjectType } from './objects/customProductOption/customProductOptionSizeObjectType';
-import { customProductOptionSizeType } from './objects/customProductOption/customProductOptionSizeType';
 import { footerType } from './objects/global/footerType';
 import { gridItemType } from './objects/module/gridItemType';
 import { gridType } from './objects/module/gridType';
@@ -53,10 +49,6 @@ const objects = [
   collectionLinksType,
   collectionReferenceType,
   collectionRuleType,
-  customProductOptionColorObjectType,
-  customProductOptionColorType,
-  customProductOptionSizeObjectType,
-  customProductOptionSizeType,
   footerType,
   gridItemType,
   gridType,
