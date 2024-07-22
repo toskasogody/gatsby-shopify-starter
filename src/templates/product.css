@@ -1,7 +1,10 @@
 .product-container {
   font-family: Arial, sans-serif;
-  display: flex;
   margin-top: 50px;
+}
+
+.slider-wrapper {
+  width: 60px;
 }
 
 .variant-options {
@@ -23,12 +26,13 @@
   align-items: flex-start;
   text-align: left;
   gap: 20px;
-  width: fit-content;
+  width: 100%;
 }
 
 .product-preview {
   max-height: 80vh;
   width: auto;
+  object-fit: contain;
 }
 
 .pdp-info {
@@ -41,14 +45,6 @@
 .pdp-title {
   font-size: 1.5rem;
   margin-bottom: -20px;
-}
-
-
-.slider-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .variant-image-slide {
@@ -81,34 +77,6 @@
   margin-top: auto;
 }
 
-@media (max-width: 1200px) {
-  
-
-  .product-preview {
-    max-height: 50vh;
-    width: auto;
-  }
-}
-@media (max-width: 992px) {
-  .row {
-    justify-content: center;
-  }
-  .pdp-details {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .product-preview {
-    max-height: 50vh;
-    width: auto;
-  }
-  .pdp-info {
-    width: 100%;
-  }
-  
-
-}
-
 .quantity-controls {
   display: flex;
   align-items: center;
@@ -117,7 +85,6 @@
 
 .quantity-label {
   margin-right: 10px;
-
 }
 
 .btn-quantity {
@@ -148,7 +115,54 @@
   font-weight: bold;
 }
 
-.button-add-to-cart{
+.button-add-to-cart {
   margin-top: 20px;
   border-radius: 0;
+}
+
+@media (max-width: 1200px) {
+  .product-preview {
+    max-height: 50vh;
+    width: auto;
+  }
+}
+@media (max-width: 767px) {
+  .row {
+    justify-content: center;
+  }
+  .pdp-details {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .product-preview {
+    max-height: 50vh;
+    width: auto;
+  }
+  .pdp-info {
+    width: 100%;
+  }
+
+  .slider-wrapper {
+    width: 100%;
+    position: relative;
+  }
+  .pdp-details {
+    width: 100%;
+  }
+  .slider-arrow-up,
+  .slider-arrow-down {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%) rotate(-90deg);
+  }
+  .slick-slider {
+    padding: 0px 40px;
+  }
+  .slider-arrow-down {
+    right: 0;
+  }
+  .button-add-to-cart {
+    margin-bottom: 50px;
+  }
 }

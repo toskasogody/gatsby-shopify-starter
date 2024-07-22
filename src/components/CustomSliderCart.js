@@ -73,5 +73,4 @@ const CustomSliderCart = () => {
     </div>
   );
 };
-
 export default CustomSliderCart;
