@@ -2,13 +2,21 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'gatsby';
 import { CartContext } from '../context/CartContext';
 import Navbar from '../components/navbar';
-import CustomSliderCart from '../components/CustomSliderCart'; 
+import CustomSliderCart from '../components/CustomSliderCart';
+import { TailSpin } from 'react-loader-spinner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './products.css';
 
 const ProductsPage = () => {
   const { products, addToCart, toggleCart } = useContext(CartContext);
   const [notification, setNotification] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (products.length > 0) {
+      setLoading(false);
+    }
+  }, [products]);
 
   useEffect(() => {
     if (notification) {
@@ -29,12 +37,19 @@ const ProductsPage = () => {
     };
     console.log('Adding to cart:', productToAdd); // Log product being added
     addToCart(productToAdd);
-    toggleCart(); 
+    toggleCart();
     setNotification(`${product.title} has been added to the cart`);
   };
 
-  if (!products || products.length === 0) {
-    return <p>No products available</p>;
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="spinner-container">
+          <TailSpin height="50" width="50" color="blue" ariaLabel="loading" />
+        </div>
+      </>
+    );
   }
 
   return (

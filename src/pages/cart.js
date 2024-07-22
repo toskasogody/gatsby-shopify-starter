@@ -1,25 +1,56 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'gatsby';
 import { CartContext } from '../context/CartContext';
 import Navbar from '../components/navbar';
+import { TailSpin } from 'react-loader-spinner';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './cart.css';
 
 const CartPage = () => {
   const { cart, removeFromCart, updateQuantity, createCheckout } = useContext(CartContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (cart !== undefined) {
+      setLoading(false);
+    }
+  }, [cart]);
 
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.quantity * parseFloat(item.variant.price.amount), 0).toFixed(2);
   };
 
   const handleCheckout = async () => {
-    const checkoutUrl = await createCheckout();
-    if (checkoutUrl) {
-      window.location.href = checkoutUrl;
-    } else {
-      alert('Failed to create checkout. Please try again.');
+    if (!cart.length) {
+      alert('Your cart is empty. Add products to proceed.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const checkoutUrl = await createCheckout();
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        alert('Failed to create checkout. Please try again.');
+      }
+    } catch (error) {
+      alert('Error during checkout process. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="spinner-container">
+          <TailSpin height="50" width="50" color="blue" ariaLabel="loading" />
+        </div>
+      </>
+    );
+  }
 
   if (!cart.length) {
     return (
@@ -27,7 +58,7 @@ const CartPage = () => {
         <Navbar />
         <div className="spinner-container">
           <p className="loading-text">Your cart is empty</p>
-          <Link to="/products" className="btn btn-primary">Back to Products</Link>
+          <Link to="/products">Back to Products</Link>
         </div>
       </>
     );
@@ -60,11 +91,9 @@ const CartPage = () => {
           </ul>
           <div className="cart-total">
             <h3 className="total">Total: ${calculateTotal()}</h3>
-            {cart.length > 0 && (
-              <button onClick={handleCheckout} className="checkout-button">
-                Checkout
-              </button>
-            )}
+            <button onClick={handleCheckout} className="checkout-button" disabled={isLoading}>
+              {isLoading ? <TailSpin height="20" width="20" color="white" ariaLabel="loading" /> : 'Checkout'}
+            </button>
           </div>
         </div>
       </div>
