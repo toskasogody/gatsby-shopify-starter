@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { Link } from 'gatsby';
 import { CartContext } from '../context/CartContext';
 import Navbar from '../components/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -22,9 +23,13 @@ const CartPage = () => {
 
   if (!cart.length) {
     return (
-      <div className="spinner-container">
-        <p className="loading-text">Your cart is empty</p>
-      </div>
+      <>
+        <Navbar />
+        <div className="spinner-container">
+          <p className="loading-text">Your cart is empty</p>
+          <Link to="/products" className="btn btn-primary">Back to Products</Link>
+        </div>
+      </>
     );
   }
 
