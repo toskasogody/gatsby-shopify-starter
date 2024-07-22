@@ -37,6 +37,7 @@ const ProductPage = ({ data }) => {
   const { addToCart, toggleCart } = useContext(CartContext);
   const sliderRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(product.store.variants[0].store.previewImageUrl);
+  const [quantity, setQuantity] = useState(1); // Quantity state
 
   const handleVariantClick = (variant) => {
     setSelectedImage(variant.store.previewImageUrl);
@@ -47,7 +48,7 @@ const ProductPage = ({ data }) => {
   };
 
   const handleAddToCart = async () => {
-    const defaultVariant = product.store.variants[0]; // default variant 
+    const defaultVariant = product.store.variants[0]; // default variant
     const variantId = `gid://shopify/ProductVariant/${defaultVariant.store.id}`;
     const productId = product.store.id; // Extract the actual product ID
     const productToAdd = {
@@ -57,7 +58,7 @@ const ProductPage = ({ data }) => {
         ...defaultVariant,
         id: variantId,
       },
-      quantity: 1,
+      quantity: quantity, // Add the quantity here
     };
     console.log('Adding to cart:', productToAdd);
 
@@ -67,6 +68,13 @@ const ProductPage = ({ data }) => {
     } catch (error) {
       console.error('Error adding to cart:', error);
     }
+  };
+
+  const handleQuantityChange = (change) => {
+    setQuantity((prevQuantity) => {
+      const newQuantity = prevQuantity + change;
+      return newQuantity < 1 ? 1 : newQuantity; // Ensure quantity doesn't go below 1
+    });
   };
 
   const settings = {
@@ -123,12 +131,21 @@ const ProductPage = ({ data }) => {
             <div className="product-info pdp-info">
               <h1 className="product-title pdp-title">{product.store.title}</h1>
               <p className="product-price">${product.store.variants[0].store.price}</p>
+              <div className="quantity-controls">
+                <span className="quantity-label">Quantity:</span> 
+                <button className="btn-quantity" onClick={() => handleQuantityChange(-1)}>-</button>
+                <span className="quantity-display">{quantity}</span>
+                <button className="btn-quantity" onClick={() => handleQuantityChange(1)}>+</button>
+              </div>
+              <div className="buy-button">
               <button className="button-add-to-cart btn btn-primary" onClick={handleAddToCart}>Add to Cart</button>
             </div>
           </div>
         </div>
       </div>
+      </div>
     </>
+    
   );
 };
 
