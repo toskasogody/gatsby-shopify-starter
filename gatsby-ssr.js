@@ -1,16 +1,11 @@
-/**
- * Implement Gatsby's SSR (Server Side Rendering) APIs in this file.
- *
- * See: https://www.gatsbyjs.com/docs/reference/config-files/gatsby-ssr/
- */
+import React from 'react';
+import { CartProvider } from './src/context/CartContext';
 
-/**
- * @type {import('gatsby').GatsbySSR['onRenderBody']}
- */
-exports.onRenderBody = ({ setHtmlAttributes }) => {
-  setHtmlAttributes({ lang: `en` })
-}
-
+// Wrap the root element with CartProvider
 export const wrapRootElement = ({ element }) => (
   <CartProvider>{element}</CartProvider>
 );
+
+export const onRenderBody = ({ setHtmlAttributes }) => {
+  setHtmlAttributes({ lang: `en` });
+};
